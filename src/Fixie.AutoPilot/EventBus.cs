@@ -24,7 +24,7 @@ namespace Fixie.AutoPilot
             return Publish(new T());
         }
 
-        private T Publish<T>(T @event)
+        public T Publish<T>(T @event)
         {
             List<object> list;
             if (_handlers.TryGetValue(typeof(T), out list))

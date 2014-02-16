@@ -61,8 +61,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bool2VisibilityConverter.cs" />
+    <Compile Include="ContentViewModel.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="SetupViewModel.cs" />
+    <Compile Include="StartEvent.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -107,8 +110,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.0.0.1.133\lib\net45\Fixie.Console.exe $(OutDir) /Q /Y
-xcopy $(SolutionDir)packages\Fixie.0.0.1.133\lib\net45\Fixie.dll $(OutDir) /Q /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.0.0.1.133\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
+xcopy $(SolutionDir)packages\Fixie.0.0.1.133\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
