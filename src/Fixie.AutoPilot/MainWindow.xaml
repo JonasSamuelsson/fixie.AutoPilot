@@ -1,0 +1,21 @@
+﻿<Window x:Class="Fixie.AutoPilot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:autoPilot="clr-namespace:Fixie.AutoPilot"
+        Title="MainWindow" SizeToContent="WidthAndHeight">
+	<Window.DataContext>
+		<autoPilot:MainWindowViewModel/>
+	</Window.DataContext>
+	<StackPanel>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<TextBox Text="{Binding Directory.Value}"/>
+			<Button Grid.Column="1" Content="..." Command="{Binding BrowseCommand}" />
+			<Button Grid.Column="2" Content="GO" Command="{Binding GoCommand}" />
+		</Grid>
+	</StackPanel>
+</Window>
