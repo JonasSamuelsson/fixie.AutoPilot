@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Fixie.AutoPilot
 {
@@ -25,6 +30,7 @@ namespace Fixie.AutoPilot
 			_watcher.Created += FileSystemChanged;
 			_watcher.Deleted += FileSystemChanged;
 			_watcher.Renamed += FileSystemChanged;
+			TestResults = new ObservableCollection<TestResult>();
 
 			_eventBus.Handle<StartEvent>(HandleStartEvent);
 
@@ -42,15 +48,19 @@ namespace Fixie.AutoPilot
 		public Observable<bool> Visible { get; private set; }
 		public Observable<string> Text { get; private set; }
 		public Observable<bool> IsExecuting { get; private set; }
+		public ObservableCollection<TestResult> TestResults { get; private set; }
 
 		private void HandleStartEvent(StartEvent @event)
 		{
 			_hasChanges = true;
-			_watcher.Path = Path.GetDirectoryName(@event.Solution);
+			var solution = @event.Solution;
+			_watcher.Path = Path.GetDirectoryName(solution);
 			_watcher.EnableRaisingEvents = true;
 			Text.Value = string.Empty;
 			Visible.Value = true;
 			_cancellationTokenSource = new CancellationTokenSource();
+
+			var dispatcher = Dispatcher.CurrentDispatcher;
 
 			Task.Factory.StartNew(async () =>
 												 {
@@ -60,41 +70,85 @@ namespace Fixie.AutoPilot
 														 {
 															 _hasChanges = false;
 															 IsExecuting.Value = true;
-															 var msbuildProcess = Process.Start(new ProcessStartInfo(msbuild)
-																											{
-																												Arguments = @event.Solution + msbuildArgs,
-																												CreateNoWindow = true,
-																												RedirectStandardOutput = true,
-																												UseShellExecute = false
-																											});
-															 Text.Value = msbuildProcess.StandardOutput.ReadToEnd();
-															 msbuildProcess.WaitForExit();
-															 if (msbuildProcess.ExitCode == 0)
+															 try
 															 {
-																 var dir = Path.GetDirectoryName(GetType().Assembly.Location);
-																 var fixie = Path.Combine(dir, "Fixie.Console.exe");
-
-																 var fixieProcess = Process.Start(new ProcessStartInfo(fixie)
-																											 {
-																												 Arguments = string.Join(" ", GetPaths(@event.Solution)),
-																												 CreateNoWindow = true,
-																												 RedirectStandardOutput = true,
-																												 UseShellExecute = false,
-																												 WorkingDirectory = dir
-																											 });
-																 Text.Value += fixieProcess.StandardOutput.ReadToEnd();
-																 fixieProcess.WaitForExit();
+																 if (Compile(solution))
+																	 ExecuteTests(solution);
 															 }
+															 catch (Exception exception)
+															 {
+																 App.Error(exception);
+															 }
+															 IsExecuting.Value = false;
+															 if (_hasChanges) continue;
 														 }
 
-														 IsExecuting.Value = false;
-														 if (_hasChanges) continue;
-														 await Task.Delay(TimeSpan.FromSeconds(10));
+														 await Task.Delay(TimeSpan.FromSeconds(1));
 													 }
 												 },
-				 _cancellationTokenSource.Token,
-				 TaskCreationOptions.LongRunning,
-				 TaskScheduler.Current);
+										 _cancellationTokenSource.Token,
+										 TaskCreationOptions.LongRunning,
+										 TaskScheduler.Current);
+		}
+
+		private void ExecuteTests(string solution)
+		{
+			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
+			var fixie = Path.Combine(dir, "Fixie.Console.exe");
+
+			var fixieProcess = Process.Start(new ProcessStartInfo(fixie)
+														{
+															Arguments = string.Join(" ", GetPaths(solution)),
+															CreateNoWindow = true,
+															RedirectStandardOutput = true,
+															UseShellExecute = false,
+															WorkingDirectory = dir
+														});
+			var output = fixieProcess.StandardOutput.ReadToEnd()
+											 .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+											 .Select(x => x.TrimStart('\n'));
+
+			var list = new List<TestResult>();
+			TestResult result = null;
+			foreach (var line in output)
+			{
+				if (line.StartsWith("-----"))
+					continue;
+				if (Regex.IsMatch(line, @"\d+ passed, \d+ failed", RegexOptions.IgnoreCase))
+					continue;
+
+				if (line.StartsWith("Test "))
+				{
+					result = new TestResult { Name = new Observable<string>(line), Info = new Observable<string>() };
+					list.Add(result);
+				}
+				else
+					result.Info.Value += line;
+			}
+
+			Application.Current.Dispatcher.Invoke(() =>
+			                                      {
+				                                      TestResults.Clear();
+				                                      foreach (var item in list)
+					                                      TestResults.Add(item);
+			                                      });
+
+			fixieProcess.WaitForExit();
+		}
+
+		private bool Compile(string solution)
+		{
+			var msbuildProcess = Process.Start(new ProcessStartInfo(msbuild)
+														  {
+															  Arguments = solution + msbuildArgs,
+															  CreateNoWindow = true,
+															  RedirectStandardOutput = true,
+															  UseShellExecute = false
+														  });
+			Text.Value = msbuildProcess.StandardOutput.ReadToEnd();
+			msbuildProcess.WaitForExit();
+			var buildSucceeded = msbuildProcess.ExitCode == 0;
+			return buildSucceeded;
 		}
 
 		private static string[] GetPaths(string solution)
@@ -108,5 +162,11 @@ namespace Fixie.AutoPilot
 				 .Where(x => File.Exists(Path.Combine(Path.GetDirectoryName(x), "fixie.dll")))
 				 .ToArray();
 		}
+	}
+
+	public class TestResult
+	{
+		public Observable<string> Name { get; set; }
+		public Observable<string> Info { get; set; }
 	}
 }
