@@ -22,7 +22,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<ProgressBar Height="3" IsIndeterminate="True"/>
+			<ProgressBar Height="3" IsIndeterminate="True" Visibility="{Binding Content.IsExecuting.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}"/>
 			<TextBox Grid.Row="1" IsReadOnly="True" Height="250" Text="{Binding Content.Text.Value}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
 		</Grid>
 	</Grid>
