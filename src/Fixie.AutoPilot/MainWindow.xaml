@@ -35,7 +35,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			<ProgressBar Height="3" IsIndeterminate="True" Visibility="{Binding Content.IsExecuting.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}"/>
+			<ProgressBar Margin="2" Height="5" IsIndeterminate="{Binding Content.IsExecuting.Value}" Maximum="1" Value="1" Foreground="LimeGreen"/>
 			<!--<ItemsControl Grid.Row="1" ItemsSource="{Binding Content.TestResults}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="autoPilot:TestResult">
