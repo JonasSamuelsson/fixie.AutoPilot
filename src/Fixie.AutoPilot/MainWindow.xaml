@@ -48,7 +48,7 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>-->
-			<TextBox Grid.Row="1" IsReadOnly="True" Text="{Binding Content.Text.Value}" HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+			<TextBox Grid.Row="1" IsReadOnly="True" Text="{Binding Content.Text.Value}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
 		</Grid>
 	</Grid>
 </Window>
