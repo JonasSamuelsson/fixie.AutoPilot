@@ -72,6 +72,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bool2ColorConverter.cs" />
     <Compile Include="Bool2VisibilityConverter.cs" />
     <Compile Include="ContentViewModel.cs" />
     <Compile Include="EventBus.cs" />

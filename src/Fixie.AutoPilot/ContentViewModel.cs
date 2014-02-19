@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace Fixie.AutoPilot
 {
@@ -22,7 +22,11 @@ namespace Fixie.AutoPilot
       public ContentViewModel(EventBus eventBus)
       {
          _eventBus = eventBus;
-         _watcher = new FileSystemWatcher { EnableRaisingEvents = false };
+         _watcher = new FileSystemWatcher
+                    {
+                       EnableRaisingEvents = false,
+                       IncludeSubdirectories = true
+                    };
          _watcher.Changed += FileSystemChanged;
          _watcher.Created += FileSystemChanged;
          _watcher.Deleted += FileSystemChanged;
@@ -34,11 +38,13 @@ namespace Fixie.AutoPilot
          Visible = new Observable<bool>();
          Text = new Observable<string>();
          IsExecuting = new Observable<bool>();
+         HasErrorsOrFailures = new Observable<bool>();
       }
 
       private void FileSystemChanged(object sender, FileSystemEventArgs e)
       {
-         if (e.FullPath.IndexOf(@"\bin\debug\", StringComparison.CurrentCultureIgnoreCase) != -1) return;
+         var patterns = new[] { @"\bin\debug", @"\obj\debug" };
+         if (patterns.Any(x => e.FullPath.IndexOf(x, StringComparison.CurrentCultureIgnoreCase) != -1)) return;
          _hasChanges = true;
       }
 
@@ -46,6 +52,7 @@ namespace Fixie.AutoPilot
       public Observable<string> Text { get; private set; }
       public Observable<bool> IsExecuting { get; private set; }
       public ObservableCollection<TestResult> TestResults { get; private set; }
+      public Observable<bool> HasErrorsOrFailures { get; private set; }
 
       private void HandleStartEvent(StartEvent @event)
       {
@@ -57,8 +64,6 @@ namespace Fixie.AutoPilot
          Visible.Value = true;
          _cancellationTokenSource = new CancellationTokenSource();
 
-         var dispatcher = Dispatcher.CurrentDispatcher;
-
          Task.Factory.StartNew(async () =>
                                      {
                                         while (true)
@@ -67,10 +72,13 @@ namespace Fixie.AutoPilot
                                            {
                                               _hasChanges = false;
                                               IsExecuting.Value = true;
+                                              HasErrorsOrFailures.Value = false;
                                               try
                                               {
                                                  if (Compile(solution))
                                                     ExecuteTests(solution);
+                                                 else
+                                                    HasErrorsOrFailures.Value = true;
                                               }
                                               catch (Exception exception)
                                               {
@@ -103,35 +111,7 @@ namespace Fixie.AutoPilot
                                           });
          var output = fixieProcess.StandardOutput.ReadToEnd();
          Text.Value += output.TrimEnd();
-
-         //var outputLines = output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-         //                        .Select(x => x.TrimStart('\n'));
-
-         //var list = new List<TestResult>();
-         //TestResult result = null;
-         //foreach (var line in outputLines)
-         //{
-         //   if (line.StartsWith("-----"))
-         //      continue;
-         //   if (Regex.IsMatch(line, @"\d+ passed, \d+ failed", RegexOptions.IgnoreCase))
-         //      continue;
-
-         //   if (line.StartsWith("Test "))
-         //   {
-         //      result = new TestResult { Name = new Observable<string>(line), Info = new Observable<string>() };
-         //      list.Add(result);
-         //   }
-         //   else
-         //      result.Info.Value += line;
-         //}
-
-         //Application.Current.Dispatcher.Invoke(() =>
-         //                                      {
-         //                                         TestResults.Clear();
-         //                                         foreach (var item in list)
-         //                                            TestResults.Add(item);
-         //                                      });
-
+         HasErrorsOrFailures.Value = Regex.IsMatch(Text, "Test '.+' failed");
          fixieProcess.WaitForExit();
       }
 

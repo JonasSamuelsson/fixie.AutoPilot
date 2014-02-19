@@ -31,11 +31,14 @@
 			<Button Grid.ColumnSpan="2" Grid.Row="1" Content="GO" Command="{Binding Setup.GoCommand}" Height="50" VerticalAlignment="Top" />
 		</Grid>
 		<Grid Visibility="{Binding Content.Visible.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}">
+			<Grid.Resources>
+				<autoPilot:Bool2ColorConverter x:Key="ColorConverter" FalseBrush="LimeGreen" TrueBrush="Red" />
+			</Grid.Resources>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			<ProgressBar Margin="2" Height="5" IsIndeterminate="{Binding Content.IsExecuting.Value}" Maximum="1" Value="1" Foreground="LimeGreen"/>
+			<ProgressBar Margin="2" Height="5" IsIndeterminate="{Binding Content.IsExecuting.Value}" Maximum="1" Value="1" Foreground="{Binding Content.HasErrorsOrFailures.Value, Converter={StaticResource ColorConverter}}"/>
 			<!--<ItemsControl Grid.Row="1" ItemsSource="{Binding Content.TestResults}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="autoPilot:TestResult">
