@@ -3,43 +3,43 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:autoPilot="clr-namespace:Fixie.AutoPilot"
         Title="fixie AutoPilot" Width="600" Height="400">
-	
-	<Window.DataContext>
-		<autoPilot:MainWindowViewModel/>
-	</Window.DataContext>
-	
-	<Window.Resources>
-		<ResourceDictionary Source="ResourceDictionaries/Resources.xaml"/>
-	</Window.Resources>
-	
-	<Grid Margin="2">
-		<Grid Visibility="{Binding Setup.Visible.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition/>
-			</Grid.RowDefinitions>
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<Label Content="Solution:" />
-				<TextBox Grid.Column="1" Text="{Binding Setup.Solution.Value, UpdateSourceTrigger=PropertyChanged}"/>
-				<Button Grid.Column="2" Content="..." Command="{Binding Setup.BrowseCommand}" Width="24" />
-			</Grid>
-			<Button Grid.ColumnSpan="2" Grid.Row="1" Content="GO" Command="{Binding Setup.GoCommand}" Height="50" VerticalAlignment="Top" />
-		</Grid>
-		<Grid Visibility="{Binding Content.Visible.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}">
-			<Grid.Resources>
-				<autoPilot:Bool2ColorConverter x:Key="ColorConverter" FalseBrush="LimeGreen" TrueBrush="Red" />
-			</Grid.Resources>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition/>
-			</Grid.RowDefinitions>
-			<ProgressBar Margin="2" Height="5" IsIndeterminate="{Binding Content.IsExecuting.Value}" Maximum="1" Value="1" Foreground="{Binding Content.HasErrorsOrFailures.Value, Converter={StaticResource ColorConverter}}"/>
-			<!--<ItemsControl Grid.Row="1" ItemsSource="{Binding Content.TestResults}">
+
+    <Window.DataContext>
+        <autoPilot:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary Source="ResourceDictionaries/Resources.xaml"/>
+    </Window.Resources>
+
+    <Grid Margin="2">
+        <Grid Visibility="{Binding Setup.Visible.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Solution:" />
+                <TextBox Grid.Column="1" Text="{Binding Setup.Solution.Value, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Column="2" Content="..." Command="{Binding Setup.BrowseCommand}" Width="24" />
+            </Grid>
+            <Button Grid.ColumnSpan="2" Grid.Row="1" Content="GO" Command="{Binding Setup.GoCommand}" Height="50" VerticalAlignment="Top" />
+        </Grid>
+        <Grid Visibility="{Binding Content.Visible.Value, Converter={x:Static autoPilot:Bool2VisibilityConverter.Instance}}">
+            <Grid.Resources>
+                <autoPilot:Bool2ColorConverter x:Key="ColorConverter" FalseBrush="LimeGreen" TrueBrush="Red" />
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ProgressBar Margin="2" Height="5" IsIndeterminate="{Binding Content.IsExecuting.Value}" Maximum="1" Value="1" Foreground="{Binding Content.HasErrorsOrFailures.Value, Converter={StaticResource ColorConverter}}"/>
+            <!--<ItemsControl Grid.Row="1" ItemsSource="{Binding Content.TestResults}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="autoPilot:TestResult">
 						<Expander Header="{Binding Name.Value}" IsExpanded="False">
@@ -48,7 +48,7 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>-->
-			<TextBox Grid.Row="1" IsReadOnly="True" Text="{Binding Content.Text.Value}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-		</Grid>
-	</Grid>
+            <TextBox Grid.Row="1" IsReadOnly="True" FontFamily="Consolas" Text="{Binding Content.Text.Value}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        </Grid>
+    </Grid>
 </Window>
