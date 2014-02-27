@@ -43,7 +43,7 @@ namespace Fixie.AutoPilot
 
         private void FileSystemChanged(object sender, FileSystemEventArgs e)
         {
-            var patterns = new[] { @"\\bin\\debug", @"\\obj\\debug", @".+\.suo$" };
+            var patterns = new[] { @"\\bin\\debug", @"\\obj\\debug", @".+\.suo$", @"\.user$" };
             if (patterns.Any(x => Regex.IsMatch(e.FullPath, x, RegexOptions.IgnoreCase))) return;
             _hasChanges = true;
         }
