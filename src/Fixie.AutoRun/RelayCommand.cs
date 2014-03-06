@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
     public class RelayCommand : RelayCommand<object>
     {

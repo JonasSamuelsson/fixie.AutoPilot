@@ -1,4 +1,4 @@
-﻿namespace Fixie.AutoPilot
+﻿namespace Fixie.AutoRun
 {
     internal class StartEvent
     {

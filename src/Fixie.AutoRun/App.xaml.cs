@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

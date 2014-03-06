@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
     public class SetupViewModel
     {

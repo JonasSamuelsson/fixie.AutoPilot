@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
     public class Observable<T> : INotifyPropertyChanged
     {

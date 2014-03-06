@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
     public class ContentViewModel
     {

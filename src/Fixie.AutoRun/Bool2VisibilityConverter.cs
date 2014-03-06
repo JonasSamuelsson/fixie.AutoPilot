@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
     public class Bool2VisibilityConverter : IValueConverter
     {

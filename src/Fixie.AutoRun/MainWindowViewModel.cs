@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Fixie.AutoPilot
+namespace Fixie.AutoRun
 {
     public class MainWindowViewModel
     {
