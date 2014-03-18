@@ -49,8 +49,27 @@
 				</Path.RenderTransform>
 			</Path>
 		</Grid>
-	</Viewbox>
-	<Viewbox x:Key="CloseIcon" x:Shared="False">
+    </Viewbox>
+    <Viewbox x:Key="BrowseIcon" x:Shared="False">
+        <Grid Width="48" Height="48" Visibility="Visible">
+            <Grid Visibility="Visible">
+                <Rectangle Fill="#FF333333" Visibility="Collapsed" />
+                <Ellipse Fill="#FF333333" Visibility="Collapsed" />
+                <Path Data="M50.5,4.7500001C25.232973,4.75 4.75,25.232973 4.7500001,50.5 4.75,75.767029 25.232973,96.25 50.5,96.25 75.767029,96.25 96.25,75.767029 96.25,50.5 96.25,25.232973 75.767029,4.75 50.5,4.7500001z M50.5,0C78.390381,0 101,22.609621 101,50.5 101,78.390381 78.390381,101 50.5,101 22.609621,101 0,78.390381 0,50.5 0,22.609621 22.609621,0 50.5,0z" Stretch="Fill" Fill="#FF333333" Visibility="Visible" />
+            </Grid>
+            <Path Data="M0,21.940001L64,21.940001 58.81641,53.042002 5.4832716,53.042002z M5.4829998,0L26.983213,0 26.983213,6.5154943 58.805,6.5154943 58.805,14.362 5.5063095,14.362 5.5063095,7.1121521 5.4829998,7.1121521z" Stretch="Uniform" Fill="#FF333333" Width="26" Height="26" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <TransformGroup.Children>
+                            <RotateTransform Angle="0" />
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </TransformGroup.Children>
+                    </TransformGroup>
+                </Path.RenderTransform>
+            </Path>
+        </Grid>
+    </Viewbox>
+    <Viewbox x:Key="CloseIcon" x:Shared="False">
 		<Grid Width="48" Height="48" Visibility="Visible">
 			<Grid Visibility="Visible">
 				<Rectangle Fill="#FF333333" Visibility="Collapsed" />
@@ -78,25 +97,6 @@
 				<Path Data="M50.5,4.7500001C25.232973,4.75 4.75,25.232973 4.7500001,50.5 4.75,75.767029 25.232973,96.25 50.5,96.25 75.767029,96.25 96.25,75.767029 96.25,50.5 96.25,25.232973 75.767029,4.75 50.5,4.7500001z M50.5,0C78.390381,0 101,22.609621 101,50.5 101,78.390381 78.390381,101 50.5,101 22.609621,101 0,78.390381 0,50.5 0,22.609621 22.609621,0 50.5,0z" Stretch="Fill" Fill="#FF333333" Visibility="Visible" />
 			</Grid>
 			<Path Data="M51.527958,0L64,12.4741 44.47221,32.001027 64,51.52871 51.528,64.000001 32.000016,44.472668 12.471823,64.000001 0.0010004044,51.528802 19.528015,32.001088 0,12.473726 12.472,0.0010004044 31.999884,19.528773z" Stretch="Uniform" Fill="#FF333333" Width="26" Height="26" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
-				<Path.RenderTransform>
-					<TransformGroup>
-						<TransformGroup.Children>
-							<RotateTransform Angle="0" />
-							<ScaleTransform ScaleX="1" ScaleY="1" />
-						</TransformGroup.Children>
-					</TransformGroup>
-				</Path.RenderTransform>
-			</Path>
-		</Grid>
-	</Viewbox>
-	<Viewbox x:Key="OpenIcon" x:Shared="False">
-		<Grid Width="48" Height="48" Visibility="Visible">
-			<Grid Visibility="Visible">
-				<Rectangle Fill="#FF333333" Visibility="Collapsed" />
-				<Ellipse Fill="#FF333333" Visibility="Collapsed" />
-				<Path Data="M50.5,4.7500001C25.232973,4.75 4.75,25.232973 4.7500001,50.5 4.75,75.767029 25.232973,96.25 50.5,96.25 75.767029,96.25 96.25,75.767029 96.25,50.5 96.25,25.232973 75.767029,4.75 50.5,4.7500001z M50.5,0C78.390381,0 101,22.609621 101,50.5 101,78.390381 78.390381,101 50.5,101 22.609621,101 0,78.390381 0,50.5 0,22.609621 22.609621,0 50.5,0z" Stretch="Fill" Fill="#FF333333" Visibility="Visible" />
-			</Grid>
-			<Path Data="M0,21.940001L64,21.940001 58.81641,53.042002 5.4832716,53.042002z M5.4829998,0L26.983213,0 26.983213,6.5154943 58.805,6.5154943 58.805,14.362 5.5063095,14.362 5.5063095,7.1121521 5.4829998,7.1121521z" Stretch="Uniform" Fill="#FF333333" Width="26" Height="26" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
 				<Path.RenderTransform>
 					<TransformGroup>
 						<TransformGroup.Children>
@@ -164,5 +164,24 @@
 				</Path.RenderTransform>
 			</Path>
 		</Grid>
-	</Viewbox>
+    </Viewbox>
+    <Viewbox x:Key="StopIcon" x:Shared="False">
+        <Grid Width="48" Height="48" Visibility="Visible">
+            <Grid Visibility="Visible">
+                <Rectangle Fill="#FF333333" Visibility="Collapsed" />
+                <Ellipse Fill="#FF333333" Visibility="Collapsed" />
+                <Path Data="M50.5,4.7500001C25.232973,4.75 4.75,25.232973 4.7500001,50.5 4.75,75.767029 25.232973,96.25 50.5,96.25 75.767029,96.25 96.25,75.767029 96.25,50.5 96.25,25.232973 75.767029,4.75 50.5,4.7500001z M50.5,0C78.390381,0 101,22.609621 101,50.5 101,78.390381 78.390381,101 50.5,101 22.609621,101 0,78.390381 0,50.5 0,22.609621 22.609621,0 50.5,0z" Stretch="Fill" Fill="#FF333333" Visibility="Visible" />
+            </Grid>
+            <Path Data="M0,0L64,0 64,64 0,64z" Stretch="Uniform" Fill="#FF333333" Width="26" Height="26" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <TransformGroup.Children>
+                            <RotateTransform Angle="0" />
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </TransformGroup.Children>
+                    </TransformGroup>
+                </Path.RenderTransform>
+            </Path>
+        </Grid>
+    </Viewbox>
 </ResourceDictionary>
