@@ -8,7 +8,7 @@ namespace Fixie.AutoRun
     {
         private readonly Dictionary<Type, List<object>> _handlers = new Dictionary<Type, List<object>>();
 
-        public void Handle<T>(Action<T> handler)
+        public void Subscribe<T>(Action<T> handler)
         {
             List<object> list;
             if (!_handlers.TryGetValue(typeof(T), out list))

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -6,20 +6,21 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Fixie.AutoRun
 {
-   public class ContentViewModel
+   internal class ExecuteViewModel
    {
-      private const string msbuild = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe";
-      private const string msbuildArgs = " /p:Configuration=Debug /p:Platform=\"Any CPU\" /v:minimal /nologo /t:rebuild /tv:4.0";
+      private const string MsBuildPath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe";
+      private const string MsBuildArgs = " /p:Configuration=Debug /p:Platform=\"Any CPU\" /v:minimal /nologo /t:rebuild /tv:4.0";
 
       private CancellationTokenSource _cancellationTokenSource;
       private readonly EventBus _eventBus;
       private readonly FileSystemWatcher _watcher;
       private bool _hasChanges;
 
-      public ContentViewModel(EventBus eventBus)
+      public ExecuteViewModel(EventBus eventBus)
       {
          _eventBus = eventBus;
          _watcher = new FileSystemWatcher
@@ -33,12 +34,16 @@ namespace Fixie.AutoRun
          _watcher.Renamed += FileSystemChanged;
          TestResults = new ObservableCollection<TestResult>();
 
-         _eventBus.Subscribe<StartEvent>(HandleStartEvent);
-
-         Visible = new Observable<bool>();
-         Text = new Observable<string>();
+         Path = new Observable<string>();
+         Output = new Observable<string>();
+         IsEnabled = new Observable<bool>();
+         IsEnabled.PropertyChanged += delegate { _watcher.EnableRaisingEvents = IsEnabled; };
          IsExecuting = new Observable<bool>();
          HasErrorsOrFailures = new Observable<bool>();
+
+         BackCommand = new RelayCommand(Back);
+         PauseCommand = new RelayCommand(() => IsEnabled.Value = false);
+         PlayCommand = new RelayCommand(() => IsEnabled.Value = true);
       }
 
       private void FileSystemChanged(object sender, FileSystemEventArgs e)
@@ -48,20 +53,23 @@ namespace Fixie.AutoRun
          _hasChanges = true;
       }
 
-      public Observable<bool> Visible { get; private set; }
-      public Observable<string> Text { get; private set; }
+      public Observable<string> Path { get; private set; }
+      public Observable<string> Output { get; private set; }
+      public Observable<bool> IsEnabled { get; private set; }
       public Observable<bool> IsExecuting { get; private set; }
       public ObservableCollection<TestResult> TestResults { get; private set; }
       public Observable<bool> HasErrorsOrFailures { get; private set; }
+      public ICommand BackCommand { get; private set; }
+      public ICommand PauseCommand { get; private set; }
+      public ICommand PlayCommand { get; private set; }
 
-      private void HandleStartEvent(StartEvent @event)
+      public void Run(string solutionPath)
       {
          _hasChanges = true;
-         var solution = @event.SolutionPath;
-         _watcher.Path = Path.GetDirectoryName(solution);
-         _watcher.EnableRaisingEvents = true;
-         Text.Value = string.Empty;
-         Visible.Value = true;
+         _watcher.Path = System.IO.Path.GetDirectoryName(solutionPath);
+         IsEnabled.Value = true;
+         Path.Value = solutionPath;
+         Output.Value = string.Empty;
          _cancellationTokenSource = new CancellationTokenSource();
 
          Task.Factory.StartNew(async () =>
@@ -75,8 +83,8 @@ namespace Fixie.AutoRun
                                               HasErrorsOrFailures.Value = false;
                                               try
                                               {
-                                                 if (Compile(solution))
-                                                    ExecuteTests(solution);
+                                                 if (Compile(solutionPath))
+                                                    ExecuteTests(solutionPath);
                                                  else
                                                     HasErrorsOrFailures.Value = true;
                                               }
@@ -98,8 +106,8 @@ namespace Fixie.AutoRun
 
       private void ExecuteTests(string solution)
       {
-         var dir = Path.GetDirectoryName(GetType().Assembly.Location);
-         var fixie = Path.Combine(dir, "Fixie.Console.exe");
+         var dir = System.IO.Path.GetDirectoryName(GetType().Assembly.Location);
+         var fixie = System.IO.Path.Combine(dir, "Fixie.Console.exe");
 
          var fixieProcess = Process.Start(new ProcessStartInfo(fixie)
                                           {
@@ -110,42 +118,43 @@ namespace Fixie.AutoRun
                                              WorkingDirectory = dir
                                           });
          var output = fixieProcess.StandardOutput.ReadToEnd();
-         Text.Value += output.TrimEnd();
-         HasErrorsOrFailures.Value = Regex.IsMatch(Text, "Test '.+' failed");
+         Output.Value += output.TrimEnd();
+         HasErrorsOrFailures.Value = Regex.IsMatch(Output, "Test '.+' failed");
          fixieProcess.WaitForExit();
       }
 
       private bool Compile(string solution)
       {
-         Text.Value = string.Format("------ Compiling {0} ------{1}", Path.GetFileName(solution), Environment.NewLine);
-         var msbuildProcess = Process.Start(new ProcessStartInfo(msbuild)
+         Output.Value = string.Format("------ Compiling {0} ------{1}", System.IO.Path.GetFileName(solution), Environment.NewLine);
+         var msbuildProcess = Process.Start(new ProcessStartInfo(MsBuildPath)
                                             {
-                                               Arguments = solution + msbuildArgs,
+                                               Arguments = solution + MsBuildArgs,
                                                CreateNoWindow = true,
                                                RedirectStandardOutput = true,
                                                UseShellExecute = false
                                             });
-         Text.Value += msbuildProcess.StandardOutput.ReadToEnd() + Environment.NewLine;
+         Output.Value += msbuildProcess.StandardOutput.ReadToEnd() + Environment.NewLine;
          msbuildProcess.WaitForExit();
          return msbuildProcess.ExitCode == 0;
       }
 
       private static string[] GetPaths(string solution)
       {
-         var dir = Path.GetDirectoryName(solution);
+         var dir = System.IO.Path.GetDirectoryName(solution);
          var separators = new[] { " = ", ", " };
          return File.ReadAllLines(solution)
              .Where(x => x.StartsWith("Project("))
              .Select(x => x.Split(separators, StringSplitOptions.None)[1].Trim('"'))
-             .Select(x => Path.Combine(dir, x, @"bin\debug", x + ".dll"))
-             .Where(x => File.Exists(Path.Combine(Path.GetDirectoryName(x), "fixie.dll")))
+             .Select(x => System.IO.Path.Combine(dir, x, @"bin\debug", x + ".dll"))
+             .Where(x => File.Exists(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(x), "fixie.dll")))
              .ToArray();
       }
-   }
 
-   public class TestResult
-   {
-      public Observable<string> Name { get; set; }
-      public Observable<string> Info { get; set; }
+      private void Back()
+      {
+         _cancellationTokenSource.Cancel();
+         _watcher.Dispose();
+         _eventBus.Publish<ShowLaunchEvent>();
+      }
    }
 }

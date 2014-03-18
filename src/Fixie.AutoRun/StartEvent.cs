@@ -1,12 +1,12 @@
 ﻿namespace Fixie.AutoRun
 {
-    internal class StartEvent
-    {
-        public StartEvent(string solution)
-        {
-            Solution = solution;
-        }
+   internal class StartEvent
+   {
+      public StartEvent(string solutionPath)
+      {
+         SolutionPath = solutionPath;
+      }
 
-        public string Solution { get; private set; }
-    }
+      public string SolutionPath { get; private set; }
+   }
 }
