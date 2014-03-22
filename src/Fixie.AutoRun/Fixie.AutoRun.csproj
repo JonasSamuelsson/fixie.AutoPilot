@@ -93,7 +93,9 @@
     <Compile Include="Solution.cs" />
     <Compile Include="StartEvent.cs" />
     <Compile Include="ExecuteViewModel.cs" />
+    <Compile Include="TestResult.cs" />
     <Compile Include="TestRunner.cs" />
+    <Compile Include="TextWrapping2BoolConvnverter.cs" />
     <Page Include="AppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

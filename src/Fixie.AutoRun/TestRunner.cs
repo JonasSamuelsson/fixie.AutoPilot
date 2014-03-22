@@ -5,19 +5,23 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Fixie.AutoRun
 {
-   public static class TestRunner
+   internal static class TestRunner
    {
-      public static async Task Execute(string solutionPath, Action<string> callback, CancellationToken token)
+      public static async Task Execute(string solutionPath, Action<TestResult> callback, CancellationToken token)
       {
          var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
          var fixie = Path.Combine(dir, "Fixie.Console.exe");
+         var reportPath = Path.Combine(Path.GetTempPath(), string.Format("fixie_{0}.xml", DateTime.Now.Ticks));
+         var args = GetPaths(solutionPath).Append("--fixie:XUnitXml")
+                                          .Append(reportPath);
 
          var process = Process.Start(new ProcessStartInfo(fixie)
                                           {
-                                             Arguments = string.Join(" ", GetPaths(solutionPath)),
+                                             Arguments = string.Join(" ", args),
                                              CreateNoWindow = true,
                                              RedirectStandardOutput = true,
                                              UseShellExecute = false,
@@ -35,7 +39,24 @@ namespace Fixie.AutoRun
             await Task.Delay(50, token);
          }
 
-         callback(process.StandardOutput.ReadToEnd().TrimEnd());
+         (from c in XElement.Load(reportPath).Elements()
+          let cName = c.Attribute("name").Value
+          let indexOfLastDot = cName.LastIndexOf('.')
+          let @namespace = cName.Substring(0, indexOfLastDot)
+          let @class = cName.Substring(indexOfLastDot + 1)
+          from t in c.Elements()
+          let test = t.Attribute("name").Value.Substring(cName.Length + 1)
+          let testStatus = (TestStatus)Enum.Parse(typeof(TestStatus), t.Attribute("result").Value, true)
+          select new TestResult
+                 {
+                    Class = @class,
+                    FailReason = t.Element("failure") == null
+                                    ? string.Empty
+                                    : t.Element("failure").Attribute("exception-type").Value + t.Element("failure").Element("message").Value,
+                    Namespace = @namespace,
+                    Test = test,
+                    Status = testStatus
+                 }).Each(callback);
       }
 
       private static string[] GetPaths(string solution)
