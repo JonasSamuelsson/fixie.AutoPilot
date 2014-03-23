@@ -64,55 +64,81 @@
                                     <DataTemplate DataType="{x:Type local:TestResult}">
                                         <StackPanel>
                                             <StackPanel.Triggers>
-                                                <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheToggleButton">
+                                                <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">
                                                     <BeginStoryboard>
                                                         <Storyboard>
                                                             <DoubleAnimation Storyboard.TargetName="TheStackPanel"
                                                                              Storyboard.TargetProperty="Height"
                                                                              To="{Binding ElementName=TheTextBox, Path=ActualHeight}"
-                                                                             Duration="0:0:0.2"/>
-                                                            <DoubleAnimation Storyboard.TargetName="TheToggleButton"
-                                                                             Storyboard.TargetProperty="(ToggleButton.RenderTransform).(RotateTransform.Angle)"
-                                                                             To="90"
-                                                                             Duration="0:0:0.2"/>
+                                                                             Duration="0:0:0.25">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <ExponentialEase EasingMode="EaseOut"/>
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
-                                                <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="TheToggleButton">
+                                                <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="TheCheckBox">
                                                     <BeginStoryboard>
                                                         <Storyboard>
                                                             <DoubleAnimation Storyboard.TargetName="TheStackPanel"
                                                                              Storyboard.TargetProperty="Height"
                                                                              To="0"
                                                                              Duration="0:0:0.1"/>
-                                                            <DoubleAnimation Storyboard.TargetName="TheToggleButton"
-                                                                             Storyboard.TargetProperty="(ToggleButton.RenderTransform).(RotateTransform.Angle)"
-                                                                             To="0"
-                                                                             Duration="0:0:0.2"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
                                             </StackPanel.Triggers>
                                             <StackPanel Orientation="Horizontal">
                                                 <StackPanel.Resources>
-                                                    <Style x:Key="Chromeless" TargetType="{x:Type ToggleButton}">
+                                                    <Style x:Key="CustomCheckBoxStyle" TargetType="{x:Type CheckBox}">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
-                                                                <ControlTemplate TargetType="ToggleButton">
-                                                                    <Border BorderThickness="0" Height="16" Width="16">
-                                                                        <ContentPresenter/>
-                                                                    </Border>
+                                                                <ControlTemplate TargetType="{x:Type CheckBox}">
+                                                                    <ControlTemplate.Triggers>
+                                                                        <EventTrigger RoutedEvent="Checked">
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Storyboard.TargetName="TheMarker"
+                                                                                                     Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
+                                                                                                     To="90"
+                                                                                                     Duration="0:0:0.25">
+                                                                                        <DoubleAnimation.EasingFunction>
+                                                                                            <ExponentialEase EasingMode="EaseOut"/>
+                                                                                        </DoubleAnimation.EasingFunction>
+                                                                                    </DoubleAnimation>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </EventTrigger>
+                                                                        <EventTrigger RoutedEvent="Unchecked">
+                                                                            <BeginStoryboard>
+                                                                                <Storyboard>
+                                                                                    <DoubleAnimation Storyboard.TargetName="TheMarker"
+                                                                                                     Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
+                                                                                                     To="0"
+                                                                                                     Duration="0:0:0.1"/>
+                                                                                </Storyboard>
+                                                                            </BeginStoryboard>
+                                                                        </EventTrigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                    <StackPanel>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <Label x:Name="TheMarker" FontSize="13" Content=">" RenderTransformOrigin="0.5 0.5">
+                                                                                <Label.RenderTransform>
+                                                                                    <RotateTransform Angle="0"/>
+                                                                                </Label.RenderTransform>
+                                                                            </Label>
+                                                                            <Label FontSize="13">
+                                                                                <ContentPresenter VerticalAlignment="Center"/>
+                                                                            </Label>
+                                                                        </StackPanel>
+                                                                    </StackPanel>
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </Style>
                                                 </StackPanel.Resources>
-                                                <ToggleButton x:Name="TheToggleButton" Content="{DynamicResource ExpanderIcon}" RenderTransformOrigin="0.5 0.5" Style="{StaticResource Chromeless}">
-                                                    <ToggleButton.RenderTransform>
-                                                        <RotateTransform Angle="0"/>
-                                                    </ToggleButton.RenderTransform>
-                                                </ToggleButton>
-                                                <Label Content="{Binding Name}" FontSize="13"/>
+                                                <CheckBox x:Name="TheCheckBox" Content="{Binding Name}" Style="{StaticResource CustomCheckBoxStyle}"/>
                                             </StackPanel>
                                             <StackPanel x:Name="TheStackPanel" Height="0">
                                                 <TextBox x:Name="TheTextBox" Text="{Binding FailReason}" Margin="0" BorderBrush="#cccccc"/>
