@@ -14,28 +14,28 @@
 					<ColumnDefinition/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
-				<Viewbox Grid.Column="0" Height="32">
-					<Button Content="{DynamicResource appbar_arrow_left}" Command="{Binding BackCommand}" Style="{DynamicResource MetroCircleButtonStyle}" />
+				<Viewbox Grid.Column="0">
+					<Button Content="{StaticResource appbar_arrow_left}" Command="{Binding BackCommand}" Style="{DynamicResource MetroCircleButtonStyle}" />
 				</Viewbox>
 				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={x:Static local:Path2FileNameConverter.Instance}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
 				<Grid Grid.Column="2">
 					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}">
-						<Viewbox Height="32">
-							<Button Content="{DynamicResource appbar_eye_hide}" Command="{Binding PauseCommand}"
+						<Viewbox>
+							<Button Content="{StaticResource appbar_eye_hide}" Command="{Binding PauseCommand}"
 							        Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"
 									  Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
-						<Viewbox Height="32">
-							<Button Content="{DynamicResource appbar_eye}" Command="{Binding PlayCommand}"
+						<Viewbox>
+							<Button Content="{StaticResource appbar_eye}" Command="{Binding PlayCommand}"
 							        Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}"
 									  Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
-						<Viewbox Height="32">
-							<Button Content="{DynamicResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}"/>
+						<Viewbox>
+							<Button Content="{StaticResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
 					</StackPanel>
-					<Viewbox Height="32">
-						<Button Content="{DynamicResource appbar_control_stop}" Command="{Binding StopCommand}"
+					<Viewbox>
+						<Button Content="{StaticResource appbar_control_stop}" Command="{Binding StopCommand}"
 						        Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"
 								  Style="{DynamicResource MetroCircleButtonStyle}"/>
 					</Viewbox>
@@ -104,7 +104,7 @@
 													</BeginStoryboard>
 												</EventTrigger>
 											</StackPanel.Triggers>
-											<CheckBox x:Name="TheCheckBox" Content="{Binding Name}" Style="{DynamicResource CustomCheckBoxStyle}"/>
+											<CheckBox x:Name="TheCheckBox" Content="{Binding Name}" Style="{StaticResource CustomCheckBoxStyle}"/>
 											<StackPanel x:Name="TheStackPanel" Height="0">
 												<TextBox x:Name="TheTextBox" Text="{Binding FailReason}" Margin="0" BorderBrush="#cccccc"/>
 											</StackPanel>

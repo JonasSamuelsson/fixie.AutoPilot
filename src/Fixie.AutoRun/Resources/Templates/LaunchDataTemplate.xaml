@@ -17,10 +17,10 @@
 					<TextBox Text="{Binding Path.Value}"/>
 				</DockPanel>
 				<StackPanel Grid.Column="1" Orientation="Horizontal">
-					<Viewbox Height="32">
+					<Viewbox>
 						<Button Content="{DynamicResource appbar_folder_open}" Command="{Binding BrowseCommand}" Style="{DynamicResource MetroCircleButtonStyle}"/>
 					</Viewbox>
-					<Viewbox Height="32">
+					<Viewbox>
 						<Button Content="{DynamicResource appbar_arrow_right}" Command="{Binding ExecuteNewCommand}" Style="{DynamicResource MetroCircleButtonStyle}"/>
 					</Viewbox>
 				</StackPanel>
@@ -35,10 +35,10 @@
 							</Grid.ColumnDefinitions>
 							<Label Content="{Binding Converter={x:Static local:Path2FileNameConverter.Instance}}" FontSize="14" ToolTip="{Binding}"/>
 							<StackPanel Grid.Column="1" Orientation="Horizontal">
-								<Viewbox Height="32">
+								<Viewbox>
 									<Button Content="{DynamicResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}"/>
 								</Viewbox>
-								<Viewbox Height="32">
+								<Viewbox>
 									<Button Content="{DynamicResource appbar_control_play}"
 									        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.ExecuteExistingCommand}"
 									        CommandParameter="{Binding}"
