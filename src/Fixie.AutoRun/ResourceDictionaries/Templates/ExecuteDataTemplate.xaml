@@ -2,155 +2,171 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						  xmlns:local="clr-namespace:Fixie.AutoRun"
 						  xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase">
-    <DataTemplate DataType="{x:Type local:ExecuteViewModel}">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="{DynamicResource BackIcon}" Command="{Binding BackCommand}" Height="32"/>
-                <Label Grid.Column="1" Content="{Binding Path.Value, Converter={x:Static local:Path2FileNameConverter.Instance}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
-                <Grid Grid.Column="2">
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}">
-                        <Button Content="{DynamicResource PauseIcon}" Command="{Binding PauseCommand}" Height="32" Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"/>
-                        <Button Content="{DynamicResource PlayIcon}" Command="{Binding PlayCommand}" Height="32" Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}"/>
-                        <Button Content="{DynamicResource SettingsIcon}" Height="32"/>
-                    </StackPanel>
-                    <Button Content="{DynamicResource StopIcon}" Command="{Binding StopCommand}" Height="32" Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"/>
-                </Grid>
-            </Grid>
-            <TabControl Grid.Row="1" TabStripPlacement="Bottom">
-                <TabItem Header="_Output">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="NoWrap"/>
-                        <CheckBox Grid.Row="1" Content="_Wrap" IsChecked="{Binding ElementName=OutputTextBox, Path=TextWrapping, Converter={x:Static local:TextWrapping2BoolConvnverter.Instance}}"/>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="_Result">
-                    <TabItem.Resources>
-                        <CollectionViewSource x:Key="TestResultsViewSource" Source="{Binding TestResults}">
-                            <CollectionViewSource.SortDescriptions>
-                                <componentModel:SortDescription PropertyName="Name"/>
-                            </CollectionViewSource.SortDescriptions>
-                        </CollectionViewSource>
-                    </TabItem.Resources>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Passed: "/>
-                            <Label Content="{Binding PassCount.Value}"/>
-                            <Label Content="Failed: "/>
-                            <Label Content="{Binding FailCount.Value}"/>
-                            <Label Content="Skipped: "/>
-                            <Label Content="{Binding SkipCount.Value}"/>
-                        </StackPanel>
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Source={StaticResource TestResultsViewSource}}"
-                                          HorizontalContentAlignment="Stretch">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type local:TestResult}">
-                                        <StackPanel>
-                                            <StackPanel.Triggers>
-                                                <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetName="TheStackPanel"
+	<DataTemplate DataType="{x:Type local:ExecuteViewModel}">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Viewbox Grid.Column="0" Height="32">
+					<Button Content="{DynamicResource appbar_arrow_left}" Command="{Binding BackCommand}" Style="{DynamicResource MetroCircleButtonStyle}" />
+				</Viewbox>
+				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={x:Static local:Path2FileNameConverter.Instance}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
+				<Grid Grid.Column="2">
+					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}">
+						<Viewbox Height="32">
+							<Button Content="{DynamicResource appbar_eye_hide}" Command="{Binding PauseCommand}"
+							        Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"
+									  Style="{DynamicResource MetroCircleButtonStyle}"/>
+						</Viewbox>
+						<Viewbox Height="32">
+							<Button Content="{DynamicResource appbar_eye}" Command="{Binding PlayCommand}"
+							        Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}"
+									  Style="{DynamicResource MetroCircleButtonStyle}"/>
+						</Viewbox>
+						<Viewbox Height="32">
+							<Button Content="{DynamicResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}"/>
+						</Viewbox>
+					</StackPanel>
+					<Viewbox Height="32">
+						<Button Content="{DynamicResource appbar_control_stop}" Command="{Binding StopCommand}"
+						        Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"
+								  Style="{DynamicResource MetroCircleButtonStyle}"/>
+					</Viewbox>
+				</Grid>
+			</Grid>
+			<TabControl Grid.Row="1" TabStripPlacement="Bottom">
+				<TabItem Header="_Output">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="NoWrap"/>
+						<CheckBox Grid.Row="1" Content="_Wrap" IsChecked="{Binding ElementName=OutputTextBox, Path=TextWrapping, Converter={x:Static local:TextWrapping2BoolConvnverter.Instance}}"/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="_Result">
+					<TabItem.Resources>
+						<CollectionViewSource x:Key="TestResultsViewSource" Source="{Binding TestResults}">
+							<CollectionViewSource.SortDescriptions>
+								<componentModel:SortDescription PropertyName="Name"/>
+							</CollectionViewSource.SortDescriptions>
+						</CollectionViewSource>
+					</TabItem.Resources>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<StackPanel Orientation="Horizontal">
+							<Label Content="Passed: "/>
+							<Label Content="{Binding PassCount.Value}"/>
+							<Label Content="Failed: "/>
+							<Label Content="{Binding FailCount.Value}"/>
+							<Label Content="Skipped: "/>
+							<Label Content="{Binding SkipCount.Value}"/>
+						</StackPanel>
+						<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+							<ItemsControl ItemsSource="{Binding Source={StaticResource TestResultsViewSource}}" HorizontalContentAlignment="Stretch">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate DataType="{x:Type local:TestResult}">
+										<StackPanel>
+											<StackPanel.Triggers>
+												<EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">
+													<BeginStoryboard>
+														<Storyboard>
+															<DoubleAnimation Storyboard.TargetName="TheStackPanel"
                                                                              Storyboard.TargetProperty="Height"
                                                                              To="{Binding ElementName=TheTextBox, Path=ActualHeight}"
                                                                              Duration="0:0:0.25">
-                                                                <DoubleAnimation.EasingFunction>
-                                                                    <ExponentialEase EasingMode="EaseOut"/>
-                                                                </DoubleAnimation.EasingFunction>
-                                                            </DoubleAnimation>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                                <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="TheCheckBox">
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetName="TheStackPanel"
+																<DoubleAnimation.EasingFunction>
+																	<ExponentialEase EasingMode="EaseOut"/>
+																</DoubleAnimation.EasingFunction>
+															</DoubleAnimation>
+														</Storyboard>
+													</BeginStoryboard>
+												</EventTrigger>
+												<EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="TheCheckBox">
+													<BeginStoryboard>
+														<Storyboard>
+															<DoubleAnimation Storyboard.TargetName="TheStackPanel"
                                                                              Storyboard.TargetProperty="Height"
                                                                              To="0"
                                                                              Duration="0:0:0.1"/>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                            </StackPanel.Triggers>
-                                            <StackPanel Orientation="Horizontal">
-                                                <StackPanel.Resources>
-                                                    <Style x:Key="CustomCheckBoxStyle" TargetType="{x:Type CheckBox}">
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="{x:Type CheckBox}">
-                                                                    <ControlTemplate.Triggers>
-                                                                        <EventTrigger RoutedEvent="Checked">
-                                                                            <BeginStoryboard>
-                                                                                <Storyboard>
-                                                                                    <DoubleAnimation Storyboard.TargetName="TheMarker"
-                                                                                                     Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
-                                                                                                     To="90"
-                                                                                                     Duration="0:0:0.25">
-                                                                                        <DoubleAnimation.EasingFunction>
-                                                                                            <ExponentialEase EasingMode="EaseOut"/>
-                                                                                        </DoubleAnimation.EasingFunction>
-                                                                                    </DoubleAnimation>
-                                                                                </Storyboard>
-                                                                            </BeginStoryboard>
-                                                                        </EventTrigger>
-                                                                        <EventTrigger RoutedEvent="Unchecked">
-                                                                            <BeginStoryboard>
-                                                                                <Storyboard>
-                                                                                    <DoubleAnimation Storyboard.TargetName="TheMarker"
-                                                                                                     Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
-                                                                                                     To="0"
-                                                                                                     Duration="0:0:0.1"/>
-                                                                                </Storyboard>
-                                                                            </BeginStoryboard>
-                                                                        </EventTrigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                    <StackPanel>
-                                                                        <StackPanel Orientation="Horizontal">
-                                                                            <Label x:Name="TheMarker" FontSize="13" Content=">" RenderTransformOrigin="0.5 0.5">
-                                                                                <Label.RenderTransform>
-                                                                                    <RotateTransform Angle="0"/>
-                                                                                </Label.RenderTransform>
-                                                                            </Label>
-                                                                            <Label FontSize="13">
-                                                                                <ContentPresenter VerticalAlignment="Center"/>
-                                                                            </Label>
-                                                                        </StackPanel>
-                                                                    </StackPanel>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style>
-                                                </StackPanel.Resources>
-                                                <CheckBox x:Name="TheCheckBox" Content="{Binding Name}" Style="{StaticResource CustomCheckBoxStyle}"/>
-                                            </StackPanel>
-                                            <StackPanel x:Name="TheStackPanel" Height="0">
-                                                <TextBox x:Name="TheTextBox" Text="{Binding FailReason}" Margin="0" BorderBrush="#cccccc"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </TabItem>
-            </TabControl>
-        </Grid>
-    </DataTemplate>
+														</Storyboard>
+													</BeginStoryboard>
+												</EventTrigger>
+											</StackPanel.Triggers>
+											<StackPanel Orientation="Horizontal">
+												<StackPanel.Resources>
+													<Style x:Key="CustomCheckBoxStyle" TargetType="{x:Type CheckBox}">
+														<Setter Property="Template">
+															<Setter.Value>
+																<ControlTemplate TargetType="{x:Type CheckBox}">
+																	<ControlTemplate.Triggers>
+																		<EventTrigger RoutedEvent="Checked">
+																			<BeginStoryboard>
+																				<Storyboard>
+																					<DoubleAnimation Storyboard.TargetName="TheMarker"
+                                                                                Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
+                                                                                To="90"
+                                                                                Duration="0:0:0.25">
+																						<DoubleAnimation.EasingFunction>
+																							<ExponentialEase EasingMode="EaseOut"/>
+																						</DoubleAnimation.EasingFunction>
+																					</DoubleAnimation>
+																				</Storyboard>
+																			</BeginStoryboard>
+																		</EventTrigger>
+																		<EventTrigger RoutedEvent="Unchecked">
+																			<BeginStoryboard>
+																				<Storyboard>
+																					<DoubleAnimation Storyboard.TargetName="TheMarker"
+                                                                                Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
+                                                                                To="0"
+                                                                                Duration="0:0:0.1"/>
+																				</Storyboard>
+																			</BeginStoryboard>
+																		</EventTrigger>
+																	</ControlTemplate.Triggers>
+																	<StackPanel>
+																		<StackPanel Orientation="Horizontal">
+																			<Viewbox x:Name="TheMarker" RenderTransformOrigin="0.5 0.5" Height="16">
+																				<Viewbox.RenderTransform>
+																					<RotateTransform Angle="0"/>
+																				</Viewbox.RenderTransform>
+																				<ContentPresenter Content="{DynamicResource appbar_control_play}"/>
+																			</Viewbox>
+																			<Label FontSize="13">
+																				<ContentPresenter VerticalAlignment="Center"/>
+																			</Label>
+																		</StackPanel>
+																	</StackPanel>
+																</ControlTemplate>
+															</Setter.Value>
+														</Setter>
+													</Style>
+												</StackPanel.Resources>
+												<CheckBox x:Name="TheCheckBox" Content="{Binding Name}" Style="{StaticResource CustomCheckBoxStyle}"/>
+											</StackPanel>
+											<StackPanel x:Name="TheStackPanel" Height="0">
+												<TextBox x:Name="TheTextBox" Text="{Binding FailReason}" Margin="0" BorderBrush="#cccccc"/>
+											</StackPanel>
+										</StackPanel>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</ScrollViewer>
+					</Grid>
+				</TabItem>
+			</TabControl>
+		</Grid>
+	</DataTemplate>
 </ResourceDictionary>
