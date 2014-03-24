@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						  xmlns:local="clr-namespace:Fixie.AutoRun"
-						  xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase">
+						  xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters">
 	<DataTemplate DataType="{x:Type local:ExecuteViewModel}">
 		<Grid>
 			<Grid.RowDefinitions>
@@ -17,17 +18,17 @@
 				<Viewbox Grid.Column="0">
 					<Button Content="{StaticResource appbar_arrow_left}" Command="{Binding BackCommand}" Style="{DynamicResource MetroCircleButtonStyle}" />
 				</Viewbox>
-				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={x:Static local:Path2FileNameConverter.Instance}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
+				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={x:Static converters:Path2FileNameConverter.Instance}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
 				<Grid Grid.Column="2">
-					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}">
+					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={x:Static converters:Bool2VisibilityConverter.InvertedInstance}}">
 						<Viewbox>
 							<Button Content="{StaticResource appbar_eye_hide}" Command="{Binding PauseCommand}"
-							        Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"
+							        Visibility="{Binding IsEnabled.Value, Converter={x:Static converters:Bool2VisibilityConverter.Instance}}"
 									  Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
 						<Viewbox>
 							<Button Content="{StaticResource appbar_eye}" Command="{Binding PlayCommand}"
-							        Visibility="{Binding IsEnabled.Value, Converter={x:Static local:Bool2VisibilityConverter.InvertedInstance}}"
+							        Visibility="{Binding IsEnabled.Value, Converter={x:Static converters:Bool2VisibilityConverter.InvertedInstance}}"
 									  Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
 						<Viewbox>
@@ -36,7 +37,7 @@
 					</StackPanel>
 					<Viewbox>
 						<Button Content="{StaticResource appbar_control_stop}" Command="{Binding StopCommand}"
-						        Visibility="{Binding IsExecuting.Value, Converter={x:Static local:Bool2VisibilityConverter.Instance}}"
+						        Visibility="{Binding IsExecuting.Value, Converter={x:Static converters:Bool2VisibilityConverter.Instance}}"
 								  Style="{DynamicResource MetroCircleButtonStyle}"/>
 					</Viewbox>
 				</Grid>
@@ -49,7 +50,7 @@
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 						<TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="NoWrap"/>
-						<CheckBox Grid.Row="1" Content="_Wrap" IsChecked="{Binding ElementName=OutputTextBox, Path=TextWrapping, Converter={x:Static local:TextWrapping2BoolConvnverter.Instance}}"/>
+						<CheckBox Grid.Row="1" Content="_Wrap" IsChecked="{Binding ElementName=OutputTextBox, Path=TextWrapping, Converter={x:Static converters:TextWrapping2BoolConvnverter.Instance}}"/>
 					</Grid>
 				</TabItem>
 				<TabItem Header="_Result">

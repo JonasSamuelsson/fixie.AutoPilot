@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-						  xmlns:local="clr-namespace:Fixie.AutoRun">
+						  xmlns:local="clr-namespace:Fixie.AutoRun"
+						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters">
 	<DataTemplate DataType="{x:Type local:LaunchViewModel}">
 		<Grid x:Name="Root">
 			<Grid.RowDefinitions>
@@ -33,7 +34,7 @@
 								<ColumnDefinition/>
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="{Binding Converter={x:Static local:Path2FileNameConverter.Instance}}" FontSize="14" ToolTip="{Binding}"/>
+							<Label Content="{Binding Converter={x:Static converters:Path2FileNameConverter.Instance}}" FontSize="14" ToolTip="{Binding}"/>
 							<StackPanel Grid.Column="1" Orientation="Horizontal">
 								<Viewbox>
 									<Button Content="{DynamicResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}"/>

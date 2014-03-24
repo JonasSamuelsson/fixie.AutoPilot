@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Converters
 {
    public class TextWrapping2BoolConvnverter : IValueConverter
    {

@@ -85,15 +85,15 @@
     <Compile Include="AppWindow.xaml.cs">
       <DependentUpon>AppWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Bool2ColorConverter.cs" />
-    <Compile Include="Bool2VisibilityConverter.cs" />
+    <Compile Include="Converters\Bool2ColorConverter.cs" />
+    <Compile Include="Converters\Bool2VisibilityConverter.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="InvertedBoolConverter.cs" />
+    <Compile Include="Converters\InvertedBoolConverter.cs" />
     <Compile Include="LaunchViewModel.cs" />
-    <Compile Include="Path2FileNameConverter.cs" />
+    <Compile Include="Converters\Path2FileNameConverter.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ShowLaunchEvent.cs" />
     <Compile Include="Solution.cs" />
@@ -101,7 +101,7 @@
     <Compile Include="ExecuteViewModel.cs" />
     <Compile Include="TestResult.cs" />
     <Compile Include="TestRunner.cs" />
-    <Compile Include="TextWrapping2BoolConvnverter.cs" />
+    <Compile Include="Converters\TextWrapping2BoolConvnverter.cs" />
     <Page Include="AppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

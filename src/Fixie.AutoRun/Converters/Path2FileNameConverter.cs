@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Data;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Converters
 {
 	public class Path2FileNameConverter : IValueConverter
 	{

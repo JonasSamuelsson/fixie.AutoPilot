@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Converters
 {
    public class Bool2ColorConverter : IValueConverter
    {

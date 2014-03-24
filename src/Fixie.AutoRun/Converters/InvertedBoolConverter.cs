@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Converters
 {
     public class InvertedBoolConverter : IValueConverter
     {
