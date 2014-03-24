@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Style x:Key="CustomCheckBoxStyle" TargetType="{x:Type CheckBox}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type CheckBox}">
+					<ControlTemplate.Triggers>
+						<EventTrigger RoutedEvent="Checked">
+							<BeginStoryboard>
+								<Storyboard>
+									<DoubleAnimation Storyboard.TargetName="TheMarker"
+                                                                                Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
+                                                                                To="90"
+                                                                                Duration="0:0:0.25">
+										<DoubleAnimation.EasingFunction>
+											<ExponentialEase EasingMode="EaseOut"/>
+										</DoubleAnimation.EasingFunction>
+									</DoubleAnimation>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+						<EventTrigger RoutedEvent="Unchecked">
+							<BeginStoryboard>
+								<Storyboard>
+									<DoubleAnimation Storyboard.TargetName="TheMarker"
+                                                                                Storyboard.TargetProperty="(Label.RenderTransform).(RotateTransform.Angle)"
+                                                                                To="0"
+                                                                                Duration="0:0:0.1"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+					</ControlTemplate.Triggers>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Viewbox x:Name="TheMarker" RenderTransformOrigin="0.5 0.5" Height="16">
+								<Viewbox.RenderTransform>
+									<RotateTransform Angle="0"/>
+								</Viewbox.RenderTransform>
+								<ContentPresenter Content="{DynamicResource appbar_control_play}"/>
+							</Viewbox>
+							<Label FontSize="13">
+								<ContentPresenter VerticalAlignment="Center"/>
+							</Label>
+						</StackPanel>
+					</StackPanel>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

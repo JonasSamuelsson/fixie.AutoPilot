@@ -3,6 +3,7 @@
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="Icons.xaml"/>
 		<ResourceDictionary Source="Styles/Button.xaml" />
+		<ResourceDictionary Source="Styles/Checkbox.xaml" />
 		<ResourceDictionary Source="Styles/Label.xaml" />
 		<ResourceDictionary Source="Styles/TextBox.xaml" />
 		<ResourceDictionary Source="Templates/ExecuteDataTemplate.xaml"/>
