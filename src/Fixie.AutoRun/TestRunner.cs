@@ -46,7 +46,7 @@ namespace Fixie.AutoRun
          if (!string.IsNullOrWhiteSpace(output))
             MessageBox.Show(output, "fixie", MessageBoxButton.OK, MessageBoxImage.Error);
 
-         (from c in XElement.Load(reportPath).Elements()
+         (from c in XElement.Load(reportPath).Elements().SelectMany(a => a.Elements())
           let cName = c.Attribute("name").Value
           let indexOfLastDot = cName.LastIndexOf('.')
           let @namespace = cName.Substring(0, indexOfLastDot)
