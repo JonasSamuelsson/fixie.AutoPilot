@@ -37,8 +37,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fixie">
-      <HintPath>..\packages\Fixie.0.0.1.133\lib\net45\Fixie.dll</HintPath>
+    <Reference Include="Fixie, Version=0.0.1.144, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Fixie.0.0.1.144\lib\net45\Fixie.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.12.1.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -85,10 +86,11 @@
     <Compile Include="AppWindow.xaml.cs">
       <DependentUpon>AppWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\Bool2ColorConverter.cs" />
     <Compile Include="Converters\Bool2VisibilityConverter.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Converters\ConverterBase.cs" />
+    <Compile Include="Converters\TextWrapping2BoolConverter.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Converters\InvertedBoolConverter.cs" />
@@ -101,7 +103,6 @@
     <Compile Include="ExecuteViewModel.cs" />
     <Compile Include="TestResult.cs" />
     <Compile Include="TestRunner.cs" />
-    <Compile Include="Converters\TextWrapping2BoolConvnverter.cs" />
     <Page Include="AppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -172,8 +173,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.0.0.1.133\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
-xcopy $(SolutionDir)packages\Fixie.0.0.1.133\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.0.0.1.144\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
+xcopy $(SolutionDir)packages\Fixie.0.0.1.144\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

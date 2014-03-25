@@ -4,20 +4,22 @@ using System.Windows.Data;
 
 namespace Fixie.AutoRun.Converters
 {
-    public class InvertedBoolConverter : IValueConverter
-    {
-        public static readonly IValueConverter Instance = new InvertedBoolConverter();
+   public class InvertedBoolConverter : ConverterBase
+   {
+      public IValueConverter Converter { get; set; }
 
-        private InvertedBoolConverter() { }
+      public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+      {
+         return Converter == null
+                   ? !(bool)value
+                   : Converter.Convert(!(bool)value, targetType, parameter, culture);
+      }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return !(bool)value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
+      public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+      {
+         return Converter == null
+                   ? !(bool)value
+                   : !(bool)Converter.ConvertBack(value, targetType, parameter, culture);
+      }
+   }
 }

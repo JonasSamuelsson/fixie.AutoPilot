@@ -5,10 +5,6 @@
         xmlns:local="clr-namespace:Fixie.AutoRun"
         Title="fixie.AutoRun" MinHeight="250" MinWidth="250" Height="500" Width="600">
 
-	<!--<Window.Resources>
-		<ResourceDictionary Source="ResourceDictionaries/Resources.xaml"/>
-	</Window.Resources>-->
-
 	<Window.DataContext>
 		<local:AppViewModel/>
 	</Window.DataContext>

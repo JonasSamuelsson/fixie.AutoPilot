@@ -18,17 +18,17 @@
 				<Viewbox Grid.Column="0">
 					<Button Content="{StaticResource appbar_arrow_left}" Command="{Binding BackCommand}" Style="{DynamicResource MetroCircleButtonStyle}" />
 				</Viewbox>
-				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={x:Static converters:Path2FileNameConverter.Instance}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
+				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={converters:Path2FileNameConverter}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
 				<Grid Grid.Column="2">
-					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={x:Static converters:Bool2VisibilityConverter.InvertedInstance}}">
+					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}">
 						<Viewbox>
 							<Button Content="{StaticResource appbar_eye_hide}" Command="{Binding PauseCommand}"
-							        Visibility="{Binding IsEnabled.Value, Converter={x:Static converters:Bool2VisibilityConverter.Instance}}"
+							        Visibility="{Binding IsEnabled.Value, Converter={converters:Bool2VisibilityConverter}}"
 									  Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
 						<Viewbox>
 							<Button Content="{StaticResource appbar_eye}" Command="{Binding PlayCommand}"
-							        Visibility="{Binding IsEnabled.Value, Converter={x:Static converters:Bool2VisibilityConverter.InvertedInstance}}"
+							        Visibility="{Binding IsEnabled.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}"
 									  Style="{DynamicResource MetroCircleButtonStyle}"/>
 						</Viewbox>
 						<Viewbox>
@@ -37,7 +37,7 @@
 					</StackPanel>
 					<Viewbox>
 						<Button Content="{StaticResource appbar_control_stop}" Command="{Binding StopCommand}"
-						        Visibility="{Binding IsExecuting.Value, Converter={x:Static converters:Bool2VisibilityConverter.Instance}}"
+						        Visibility="{Binding IsExecuting.Value, Converter={converters:Bool2VisibilityConverter}}"
 								  Style="{DynamicResource MetroCircleButtonStyle}"/>
 					</Viewbox>
 				</Grid>
@@ -49,8 +49,8 @@
 							<RowDefinition/>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
-						<TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="NoWrap"/>
-						<CheckBox Grid.Row="1" Content="_Wrap" IsChecked="{Binding ElementName=OutputTextBox, Path=TextWrapping, Converter={x:Static converters:TextWrapping2BoolConvnverter.Instance}}"/>
+						<TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="{Binding ElementName=WrapCheckBox, Path=IsChecked, Converter={converters:Bool2TextWrappingConverter}}"/>
+						<CheckBox Grid.Row="1" x:Name="WrapCheckBox" Content="_Wrap"/>
 					</Grid>
 				</TabItem>
 				<TabItem Header="_Result">

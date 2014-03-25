@@ -1,31 +1,21 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
 
 namespace Fixie.AutoRun.Converters
 {
-   public class Bool2VisibilityConverter : IValueConverter
+   public class Bool2VisibilityConverter : ConverterBase
    {
-      private readonly Visibility _falseValue;
-      private readonly Visibility _trueValue;
-      public static readonly IValueConverter Instance = new Bool2VisibilityConverter(Visibility.Collapsed, Visibility.Visible);
-      public static readonly IValueConverter InvertedInstance = new Bool2VisibilityConverter(Visibility.Visible, Visibility.Collapsed);
-
-      private Bool2VisibilityConverter(Visibility falseValue, Visibility trueValue)
+      public Bool2VisibilityConverter()
       {
-         _falseValue = falseValue;
-         _trueValue = trueValue;
+         False = Visibility.Collapsed;
       }
 
-      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-      {
-         return (bool)value ? _trueValue : _falseValue;
-      }
+      public Visibility False { get; set; }
 
-      public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+      public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
-         throw new NotImplementedException();
+         return (bool)value ? Visibility.Visible : False;
       }
    }
 }

@@ -33,20 +33,26 @@
     <Reference Include="Fixie">
       <HintPath>..\packages\Fixie.0.0.1.144\lib\net45\Fixie.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Shouldly">
       <HintPath>..\packages\Shouldly.2.1.1\lib\net40\Shouldly.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\Bool2TextWrappingConverterTests.cs" />
+    <Compile Include="Converters\Bool2VisibilityConverterTests.cs" />
     <Compile Include="Converters\InvertedBoolConverterTests.cs" />
+    <Compile Include="Converters\Path2FileNameConverterTests.cs" />
     <Compile Include="CustomConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
