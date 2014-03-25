@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace Fixie.AutoRun
@@ -15,7 +18,7 @@ namespace Fixie.AutoRun
       {
          var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
          var fixie = Path.Combine(dir, "Fixie.Console.exe");
-         var reportPath = Path.Combine(Path.GetTempPath(), string.Format("fixie_{0}.xml", DateTime.Now.Ticks));
+         var reportPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(solutionPath) + ".xml");
          var args = GetPaths(solutionPath).Append("--fixie:XUnitXml")
                                           .Append(reportPath);
 
@@ -39,6 +42,10 @@ namespace Fixie.AutoRun
             await Task.Delay(50, token);
          }
 
+         var output = CleanOutput(process.StandardOutput.ReadToEnd());
+         if (!string.IsNullOrWhiteSpace(output))
+            MessageBox.Show(output, "fixie", MessageBoxButton.OK, MessageBoxImage.Error);
+
          (from c in XElement.Load(reportPath).Elements()
           let cName = c.Attribute("name").Value
           let indexOfLastDot = cName.LastIndexOf('.')
@@ -58,6 +65,34 @@ namespace Fixie.AutoRun
                     Status = testStatus
                  }).Each(callback);
       }
+
+	   private static string CleanOutput(string output)
+	   {
+	      var buffer = new List<string>();
+		   var result = new List<string>();
+		  
+         foreach (var line in output.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+		   {
+			   if (!string.IsNullOrWhiteSpace(line))
+		      {
+			      buffer.Add(line);
+               continue;
+            }
+			   if (buffer.Any())
+			   {
+				   result.Add(string.Join(Environment.NewLine, buffer));
+				   buffer.Clear();
+			   }
+         }
+		   
+         if (buffer.Any())
+			   result.Add(string.Join(Environment.NewLine, buffer));
+
+	      return string.Join(string.Format("{0}{0}", Environment.NewLine),
+	                         result.Where(x => !x.StartsWith("-----"))
+	                               .Where(x => !x.StartsWith("Test '"))
+                                  .Where(x => !Regex.IsMatch(x, @"^\w*\d+ passed")));
+	   }
 
       private static string[] GetPaths(string solution)
       {

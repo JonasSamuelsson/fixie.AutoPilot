@@ -37,10 +37,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fixie, Version=0.0.1.144, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Fixie.0.0.1.144\lib\net45\Fixie.dll</HintPath>
-    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.12.1.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -173,8 +169,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.0.0.1.144\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
-xcopy $(SolutionDir)packages\Fixie.0.0.1.144\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(SolutionDir)Fixie.AutoRun.ThirdParty\Lib\Fixie\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
+xcopy $(SolutionDir)Fixie.AutoRun.ThirdParty\Lib\Fixie\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

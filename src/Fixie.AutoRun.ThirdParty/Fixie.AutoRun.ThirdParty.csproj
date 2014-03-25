@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3F90CEEB-7F89-4A66-BFF4-60919AB929F1}</ProjectGuid>
+    <ProjectGuid>{C271F47B-A3DF-4EAB-8FB5-056D512DA994}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Fixie.AutoRun.Tests</RootNamespace>
-    <AssemblyName>Fixie.AutoRun.Tests</AssemblyName>
+    <RootNamespace>Fixie.AutoRun.ThirdParty</RootNamespace>
+    <AssemblyName>Fixie.AutoRun.ThirdParty</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,41 +30,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fixie, Version=0.0.1.144, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Fixie.AutoRun.ThirdParty\Lib\Fixie\Fixie.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="Shouldly">
-      <HintPath>..\packages\Shouldly.2.1.1\lib\net40\Shouldly.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Converters\Bool2TextWrappingConverterTests.cs" />
-    <Compile Include="Converters\Bool2VisibilityConverterTests.cs" />
-    <Compile Include="Converters\InvertedBoolConverterTests.cs" />
-    <Compile Include="Converters\Path2FileNameConverterTests.cs" />
-    <Compile Include="CustomConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Fixie.AutoRun\Fixie.AutoRun.csproj">
-      <Project>{8BABC974-0753-4C84-AE4D-0CF6D3EE5E35}</Project>
-      <Name>Fixie.AutoRun</Name>
-    </ProjectReference>
+    <Content Include="Lib\Fixie\Fixie.Console.exe" />
+    <Content Include="Lib\Fixie\Fixie.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
