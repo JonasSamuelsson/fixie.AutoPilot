@@ -55,7 +55,10 @@
     <Compile Include="Converters\InvertedBoolConverterTests.cs" />
     <Compile Include="Converters\Path2FileNameConverterTests.cs" />
     <Compile Include="CustomConvention.cs" />
+    <Compile Include="ProjectFileParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolutionFileParserTests.cs" />
+    <Compile Include="TestDataGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

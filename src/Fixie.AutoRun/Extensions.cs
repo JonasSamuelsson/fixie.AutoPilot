@@ -20,5 +20,10 @@ namespace Fixie.AutoRun
          foreach (var x in source) yield return x;
          yield return item;
       }
+
+      public static ISet<T> ToSet<T>(this IEnumerable<T> source, IEqualityComparer<T> equalityComparer = null)
+      {
+         return new HashSet<T>(source, equalityComparer ?? EqualityComparer<T>.Default);
+      } 
    }
 }
