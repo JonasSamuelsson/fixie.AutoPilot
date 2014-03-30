@@ -24,6 +24,21 @@ namespace Fixie.AutoRun
       public static ISet<T> ToSet<T>(this IEnumerable<T> source, IEqualityComparer<T> equalityComparer = null)
       {
          return new HashSet<T>(source, equalityComparer ?? EqualityComparer<T>.Default);
-      } 
+      }
+
+      public static TimeSpan Milliseconds(this int milliseconds)
+      {
+         return TimeSpan.FromMilliseconds(milliseconds);
+      }
+
+      public static TimeSpan Seconds(this double seconds)
+      {
+         return TimeSpan.FromSeconds(seconds);
+      }
+
+      public static TimeSpan Seconds(this int seconds)
+      {
+         return TimeSpan.FromSeconds(seconds);
+      }
    }
 }

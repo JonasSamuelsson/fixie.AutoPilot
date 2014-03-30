@@ -6,9 +6,9 @@ using System.Xml.Linq;
 
 namespace Fixie.AutoRun
 {
-   public class ProjectFileParser
+   public static class ProjectFileParser
    {
-      public ProjectFile Parse(string content, string path)
+      public static ProjectFile Parse(string content, string path)
       {
          var projectDirectory = Path.GetDirectoryName(path);
 

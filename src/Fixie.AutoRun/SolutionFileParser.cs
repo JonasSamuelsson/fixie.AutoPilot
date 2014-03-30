@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Fixie.AutoRun
 {
-   public class SolutionFileParser
+   public static class SolutionFileParser
    {
-      public SolutionFile Parse(string content, string path)
+      public static SolutionFile Parse(string content, string path)
       {
          var solutionDirectory = Path.GetDirectoryName(path);
 
@@ -21,7 +21,7 @@ namespace Fixie.AutoRun
                        where parts.Length == 4
                        let projectPath = parts.ElementAt(2).Trim('"')
                        where acceptedExtensions.Any(x => projectPath.EndsWith(x, StringComparison.CurrentCultureIgnoreCase))
-                       select Path.Combine(solutionDirectory, projectPath)).ToSet()
+                       select Path.Combine(solutionDirectory, Path.GetFullPath(Path.Combine(solutionDirectory, projectPath)))).ToSet()
                 };
       }
    }

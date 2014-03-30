@@ -1,10 +1,30 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Fixie.AutoRun.Tests
 {
    public class TestDataGenerator
    {
+      private const string SolutionDir = @"x:\Test";
+      public static readonly string SolutionPath = Path.Combine(SolutionDir, @"Test.sln");
+      public static readonly string FooProjectPath = Path.Combine(SolutionDir, @"Foo\Foo.csproj");
+      public static readonly string FooTestsProjectPath = Path.Combine(SolutionDir, @"Foo.Tests\Foo.Tests.csproj");
+      public static readonly string FoobarProjectPath = Path.Combine(SolutionDir, @"Foobar\Foobar.csproj");
+
+      public static string Get(string path)
+      {
+         return new Dictionary<string, Func<string>>
+                {
+                   {SolutionPath, GetSolution},
+                   {FooProjectPath, GetFooProject},
+                   {FooTestsProjectPath, GetFooTestProject},
+                   {FoobarProjectPath, GetFoobarProject}
+                }[path]();
+      }
+
       public static string GetSolution()
       {
          return new StringBuilder()
@@ -49,7 +69,19 @@ namespace Fixie.AutoRun.Tests
             .ToString();
       }
 
-      public static string GetFooTestProject()
+	   private static string GetFooProject()
+      {
+         return new XElement("Project",
+                             new XElement("ItemGroup",
+                                          new XElement("Reference",
+                                                       new XAttribute("Include", "System"))),
+                             new XElement("ItemGroup",
+                                          new XElement("Compile",
+                                                       new XAttribute("Include", "FooType.cs"))))
+            .ToString();
+      }
+
+	   private static string GetFooTestProject()
       {
          return new XElement("Project",
                              new XElement("ItemGroup",
@@ -63,7 +95,22 @@ namespace Fixie.AutoRun.Tests
                                    new XAttribute("Include", @"..\Foo\Foo.csproj"))),
                              new XElement("ItemGroup",
                                           new XElement("Compile",
-                                                       new XAttribute("Include", "MyTypeTests.cs"))))
+                                                       new XAttribute("Include", "FooTypeTests.cs"))))
+            .ToString();
+      }
+
+	   private static string GetFoobarProject()
+      {
+         return new XElement("Project",
+                             new XElement("ItemGroup",
+                                          new XElement("Reference",
+                                                       new XAttribute("Include", "System"))),
+                             new XElement("ItemGroup",
+                                new XElement("ProjectReference",
+                                   new XAttribute("Include", @"..\Foo\Foo.csproj"))),
+                             new XElement("ItemGroup",
+                                          new XElement("Compile",
+                                                       new XAttribute("Include", "FoobarType.cs"))))
             .ToString();
       }
    }

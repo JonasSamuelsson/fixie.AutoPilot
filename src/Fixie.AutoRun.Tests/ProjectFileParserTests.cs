@@ -7,16 +7,16 @@ namespace Fixie.AutoRun.Tests
    {
       public void ShouldParseProjectFile()
       {
-         var solutionDirectory = @"c:\";
-         var projectPath = Path.Combine(solutionDirectory, "Foo.Tests", "Foo.Tests.csproj");
+         var solutionDirectory = @"x:\Test";
+         var projectPath = TestDataGenerator.FooTestsProjectPath;
 
-         var projectFile = new ProjectFileParser()
-             .Parse(TestDataGenerator.GetFooTestProject(), projectPath);
+         var projectFile = ProjectFileParser
+             .Parse(TestDataGenerator.Get(projectPath), projectPath);
 
          projectFile.Path.ShouldBe(projectPath);
 
          projectFile.Files.Count.ShouldBe(1);
-         projectFile.Files.ShouldContain(Path.Combine(solutionDirectory, "Foo.Tests", "MyTypeTests.cs"));
+         projectFile.Files.ShouldContain(Path.Combine(solutionDirectory, "Foo.Tests", "FooTypeTests.cs"));
 
          projectFile.ProjectReferences.Count.ShouldBe(1);
          projectFile.ProjectReferences.ShouldContain(Path.Combine(solutionDirectory, "Foo", "Foo.csproj"));
