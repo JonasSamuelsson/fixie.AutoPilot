@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace Fixie.AutoRun
 {
-   public class Solution
+   public class Solution : IDisposable
    {
       private readonly string _solutionPath;
       private readonly Func<string, string> _fileReader;
@@ -23,6 +23,8 @@ namespace Fixie.AutoRun
 
          ReloadSolution();
          SetupFileSystemWatcherEvents(scheduler);
+
+         _fileSystemWatcher.Directory = Path.GetDirectoryName(_solutionPath);
       }
 
       private void SetupFileSystemWatcherEvents(IScheduler scheduler)
@@ -40,15 +42,17 @@ namespace Fixie.AutoRun
                    .Buffer(1.Seconds(), scheduler)
                    .Subscribe(source =>
                               {
+                                 if (!source.Any()) return;
                                  var args = new SolutionChangedEventArgs();
                                  source.Each(x => x(args));
+                                 if (args.IsEmpty) return;
                                  Changed(this, args);
                               });
       }
 
       public static Solution Load(string path)
       {
-         return Load(path, File.ReadAllText, new FileSystemWatcherWrapper(), DispatcherScheduler.Current);
+         return Load(path, File.ReadAllText, new FileSystemWatcherWrapper(), ThreadPoolScheduler.Instance);
       }
 
       public static Solution Load(string path, Func<string, string> fileReader, IFileSystemWatcher fileSystemWatcher, IScheduler scheduler)
@@ -178,6 +182,7 @@ namespace Fixie.AutoRun
             {
                _watcher.Path = value;
                _watcher.EnableRaisingEvents = true;
+               _watcher.IncludeSubdirectories = true;
             }
          }
 
@@ -185,6 +190,11 @@ namespace Fixie.AutoRun
          {
             _watcher.Dispose();
          }
+      }
+
+      public void Dispose()
+      {
+         _fileSystemWatcher.Dispose();
       }
    }
 
@@ -212,6 +222,11 @@ namespace Fixie.AutoRun
       public ISet<string> ChangedProjects { get; private set; }
       public ISet<string> DeletedProjects { get; private set; }
       public ISet<Rename> RenamedProjects { get; private set; }
+
+      public bool IsEmpty
+      {
+         get { return !AddedProjects.Any() && !ChangedProjects.Any() && !DeletedProjects.Any() && !RenamedProjects.Any(); }
+      }
 
       public class Rename
       {

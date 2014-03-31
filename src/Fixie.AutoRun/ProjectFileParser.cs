@@ -17,7 +17,8 @@ namespace Fixie.AutoRun
          var references = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
          XElement.Parse(content)
-                 .Elements("ItemGroup")
+                 .Elements()
+                 .Where(x => x.Name.LocalName == "ItemGroup")
                  .SelectMany(x => x.Elements())
                  .Each(x =>
                        {
@@ -28,7 +29,7 @@ namespace Fixie.AutoRun
                                 break;
 
                              case "Reference":
-                                var hintPathXml = x.Element("HintPath");
+                                var hintPathXml = x.Elements().FirstOrDefault(y => y.Name.LocalName == "HintPath");
                                 if (hintPathXml == null) break;
                                 references.Add(Path.GetFullPath(Path.Combine(projectDirectory, hintPathXml.Value)));
                                 break;

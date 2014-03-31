@@ -66,33 +66,33 @@ namespace Fixie.AutoRun
                  }).Each(callback);
       }
 
-	   private static string CleanOutput(string output)
-	   {
-	      var buffer = new List<string>();
-		   var result = new List<string>();
-		  
+      private static string CleanOutput(string output)
+      {
+         var buffer = new List<string>();
+         var result = new List<string>();
+
          foreach (var line in output.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
-		   {
-			   if (!string.IsNullOrWhiteSpace(line))
-		      {
-			      buffer.Add(line);
+         {
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+               buffer.Add(line);
                continue;
             }
-			   if (buffer.Any())
-			   {
-				   result.Add(string.Join(Environment.NewLine, buffer));
-				   buffer.Clear();
-			   }
+            if (buffer.Any())
+            {
+               result.Add(string.Join(Environment.NewLine, buffer));
+               buffer.Clear();
+            }
          }
-		   
-         if (buffer.Any())
-			   result.Add(string.Join(Environment.NewLine, buffer));
 
-	      return string.Join(string.Format("{0}{0}", Environment.NewLine),
-	                         result.Where(x => !x.StartsWith("-----"))
-	                               .Where(x => !x.StartsWith("Test '"))
+         if (buffer.Any())
+            result.Add(string.Join(Environment.NewLine, buffer));
+
+         return string.Join(string.Format("{0}{0}", Environment.NewLine),
+                            result.Where(x => !x.StartsWith("-----"))
+                                  .Where(x => !x.StartsWith("Test '"))
                                   .Where(x => !Regex.IsMatch(x, @"^\w*\d+ passed")));
-	   }
+      }
 
       private static string[] GetPaths(string solution)
       {
@@ -101,7 +101,7 @@ namespace Fixie.AutoRun
          return File.ReadAllLines(solution)
              .Where(x => x.StartsWith("Project("))
              .Select(x => x.Split(separators, StringSplitOptions.None)[1].Trim('"'))
-             .Select(x => Path.Combine(dir, x, @"bin\debug", x + ".dll"))
+             .SelectMany(x => new[] { ".dll", ".exe" }.Select(y => Path.Combine(dir, x, @"bin\debug", x + y)).Where(File.Exists))
              .Where(x => File.Exists(Path.Combine(Path.GetDirectoryName(x), "fixie.dll")))
              .ToArray();
       }
