@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Fixie.AutoRun.FixieRunner.Contracts;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
+using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Xml.Linq;
 
 namespace Fixie.AutoRun
 {
@@ -16,19 +14,28 @@ namespace Fixie.AutoRun
    {
       public static async Task Execute(string solutionPath, Action<TestResult> callback, CancellationToken token)
       {
-         var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-         var fixie = Path.Combine(dir, "Fixie.Console.exe");
-         var reportPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(solutionPath) + ".xml");
-         var args = GetPaths(solutionPath).Append("--fixie:XUnitXml")
-                                          .Append(reportPath);
+         const string uri = "net.pipe://localhost/fixie.autorun";
+         var address = Guid.NewGuid().ToString();
+         var service = new Service(callback);
+         var serviceHost = new ServiceHost(service, new Uri(uri));
+         serviceHost.AddServiceEndpoint(typeof(IService), new NetNamedPipeBinding(), address);
+         serviceHost.Open();
 
-         var process = Process.Start(new ProcessStartInfo(fixie)
+         var executingAssemblyPath = Assembly.GetExecutingAssembly().Location;
+         var directory = Path.GetDirectoryName(executingAssemblyPath);
+         var fixieRunnerPath = typeof(IService).Assembly.Location;
+         var args = GetPaths(solutionPath).Append("--uri")
+                                          .Append(string.Format("{0}/{1}", uri, address))
+                                          .ToArray();
+
+
+         var process = Process.Start(new ProcessStartInfo(fixieRunnerPath)
                                           {
                                              Arguments = string.Join(" ", args),
                                              CreateNoWindow = true,
                                              RedirectStandardOutput = true,
                                              UseShellExecute = false,
-                                             WorkingDirectory = dir
+                                             WorkingDirectory = directory
                                           });
 
          while (!process.HasExited)
@@ -41,57 +48,6 @@ namespace Fixie.AutoRun
 
             await Task.Delay(50, token);
          }
-
-         var output = CleanOutput(process.StandardOutput.ReadToEnd());
-         if (!string.IsNullOrWhiteSpace(output))
-            MessageBox.Show(output, "fixie", MessageBoxButton.OK, MessageBoxImage.Error);
-
-         (from c in XElement.Load(reportPath).Elements().SelectMany(a => a.Elements())
-          let cName = c.Attribute("name").Value
-          let indexOfLastDot = cName.LastIndexOf('.')
-          let @namespace = cName.Substring(0, indexOfLastDot)
-          let @class = cName.Substring(indexOfLastDot + 1)
-          from t in c.Elements()
-          let test = t.Attribute("name").Value.Substring(cName.Length + 1)
-          let testStatus = (TestStatus)Enum.Parse(typeof(TestStatus), t.Attribute("result").Value, true)
-          select new TestResult
-                 {
-                    Class = @class,
-                    FailReason = t.Element("failure") == null
-                                    ? string.Empty
-                                    : t.Element("failure").Attribute("exception-type").Value + t.Element("failure").Element("message").Value,
-                    Namespace = @namespace,
-                    Test = test,
-                    Status = testStatus
-                 }).Each(callback);
-      }
-
-      private static string CleanOutput(string output)
-      {
-         var buffer = new List<string>();
-         var result = new List<string>();
-
-         foreach (var line in output.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
-         {
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-               buffer.Add(line);
-               continue;
-            }
-            if (buffer.Any())
-            {
-               result.Add(string.Join(Environment.NewLine, buffer));
-               buffer.Clear();
-            }
-         }
-
-         if (buffer.Any())
-            result.Add(string.Join(Environment.NewLine, buffer));
-
-         return string.Join(string.Format("{0}{0}", Environment.NewLine),
-                            result.Where(x => !x.StartsWith("-----"))
-                                  .Where(x => !x.StartsWith("Test '"))
-                                  .Where(x => !Regex.IsMatch(x, @"^\w*\d+ passed")));
       }
 
       private static string[] GetPaths(string solution)
@@ -104,6 +60,27 @@ namespace Fixie.AutoRun
              .SelectMany(x => new[] { ".dll", ".exe" }.Select(y => Path.Combine(dir, x, @"bin\debug", x + y)).Where(File.Exists))
              .Where(x => File.Exists(Path.Combine(Path.GetDirectoryName(x), "fixie.dll")))
              .ToArray();
+      }
+
+      [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+      private class Service : IService
+      {
+         private readonly Action<TestResult> _callback;
+
+         public Service(Action<TestResult> callback)
+         {
+            _callback = callback;
+         }
+
+         public void TestCompleted(TestResult testResult)
+         {
+            _callback(testResult);
+         }
+
+         public void Error(string type, string message, string stackTrace)
+         {
+            throw new NotImplementedException();
+         }
       }
    }
 }

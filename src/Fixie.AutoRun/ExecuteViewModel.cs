@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Fixie.AutoRun.FixieRunner.Contracts;
 
 namespace Fixie.AutoRun
 {
@@ -36,6 +37,7 @@ namespace Fixie.AutoRun
          BackCommand = new RelayCommand(Back);
          PauseCommand = new RelayCommand(() => IsEnabled.Value = false);
          PlayCommand = new RelayCommand(() => IsEnabled.Value = true);
+         StopCommand = new RelayCommand(() => _cancellationTokenSource.Cancel());
       }
 
       public Observable<string> Path { get; private set; }
@@ -50,6 +52,7 @@ namespace Fixie.AutoRun
       public ICommand BackCommand { get; private set; }
       public ICommand PauseCommand { get; private set; }
       public ICommand PlayCommand { get; private set; }
+      public ICommand StopCommand { get; private set; }
 
       public void Run(string solutionPath)
       {
@@ -124,10 +127,5 @@ namespace Fixie.AutoRun
          _cancellationTokenSource.Cancel();
          _eventBus.Publish<ShowLaunchEvent>();
       }
-   }
-
-   internal enum TestStatus
-   {
-      Pass, Fail, Skip
    }
 }

@@ -2,46 +2,54 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						  xmlns:local="clr-namespace:Fixie.AutoRun"
 						  xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters">
+						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters"
+						  xmlns:contracts="clr-namespace:Fixie.AutoRun.FixieRunner.Contracts;assembly=Fixie.AutoRun.FixieRunner"
+						  xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls">
 	<DataTemplate DataType="{x:Type local:ExecuteViewModel}">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			<Grid Grid.Row="0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<Viewbox Grid.Column="0">
-					<Button Content="{StaticResource appbar_arrow_left}" Command="{Binding BackCommand}" Style="{DynamicResource MetroCircleButtonStyle}" />
-				</Viewbox>
-				<Label Grid.Column="1" Content="{Binding Path.Value, Converter={converters:Path2FileNameConverter}}" FontSize="20" ToolTip="{Binding Path.Value}"/>
-				<Grid Grid.Column="2">
-					<StackPanel Orientation="Horizontal" Visibility="{Binding IsExecuting.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}">
-						<Viewbox>
-							<Button Content="{StaticResource appbar_eye_hide}" Command="{Binding PauseCommand}"
-							        Visibility="{Binding IsEnabled.Value, Converter={converters:Bool2VisibilityConverter}}"
-									  Style="{DynamicResource MetroCircleButtonStyle}"/>
-						</Viewbox>
-						<Viewbox>
-							<Button Content="{StaticResource appbar_eye}" Command="{Binding PlayCommand}"
-							        Visibility="{Binding IsEnabled.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}"
-									  Style="{DynamicResource MetroCircleButtonStyle}"/>
-						</Viewbox>
-						<Viewbox>
-							<Button Content="{StaticResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}"/>
-						</Viewbox>
-					</StackPanel>
-					<Viewbox>
-						<Button Content="{StaticResource appbar_control_stop}" Command="{Binding StopCommand}"
-						        Visibility="{Binding IsExecuting.Value, Converter={converters:Bool2VisibilityConverter}}"
-								  Style="{DynamicResource MetroCircleButtonStyle}"/>
+			<StackPanel Grid.Row="0">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Viewbox Grid.Column="0">
+						<Button Content="{StaticResource appbar_arrow_left}" Command="{Binding BackCommand}"
+						        Style="{DynamicResource MetroCircleButtonStyle}" />
 					</Viewbox>
+					<Label Grid.Column="1" Content="{Binding Path.Value, Converter={converters:Path2FileNameConverter}}" FontSize="20"
+					       ToolTip="{Binding Path.Value}" />
+					<Grid Grid.Column="2">
+						<StackPanel Orientation="Horizontal"
+						            Visibility="{Binding IsExecuting.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}">
+							<Viewbox>
+								<Button Content="{StaticResource appbar_eye_hide}" Command="{Binding PauseCommand}"
+								        Visibility="{Binding IsEnabled.Value, Converter={converters:Bool2VisibilityConverter}}"
+								        Style="{DynamicResource MetroCircleButtonStyle}" />
+							</Viewbox>
+							<Viewbox>
+								<Button Content="{StaticResource appbar_eye}" Command="{Binding PlayCommand}"
+								        Visibility="{Binding IsEnabled.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}"
+								        Style="{DynamicResource MetroCircleButtonStyle}" />
+							</Viewbox>
+							<Viewbox>
+								<Button Content="{StaticResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}" />
+							</Viewbox>
+						</StackPanel>
+						<Viewbox>
+							<Button Content="{StaticResource appbar_control_stop}" Command="{Binding StopCommand}"
+							        Visibility="{Binding IsExecuting.Value, Converter={converters:Bool2VisibilityConverter}}"
+							        Style="{DynamicResource MetroCircleButtonStyle}" />
+						</Viewbox>
+					</Grid>
 				</Grid>
-			</Grid>
+				<controls:MetroProgressBar IsIndeterminate="True" Visibility="{Binding IsExecuting.Value, Converter={converters:Bool2VisibilityConverter False=Hidden}}" />
+			</StackPanel>
 			<TabControl Grid.Row="1" TabStripPlacement="Bottom">
 				<TabItem Header="_Output">
 					<Grid>
@@ -50,7 +58,9 @@
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 						<TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="{Binding ElementName=WrapCheckBox, Path=IsChecked, Converter={converters:Bool2TextWrappingConverter}}"/>
-						<CheckBox Grid.Row="1" x:Name="WrapCheckBox" Content="_Wrap"/>
+						<CheckBox Grid.Row="1" x:Name="WrapCheckBox">
+							<Label Content="_Wrap"/>
+						</CheckBox>
 					</Grid>
 				</TabItem>
 				<TabItem Header="_Result">
@@ -77,7 +87,7 @@
 						<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 							<ItemsControl ItemsSource="{Binding Source={StaticResource TestResultsViewSource}}" HorizontalContentAlignment="Stretch">
 								<ItemsControl.ItemTemplate>
-									<DataTemplate DataType="{x:Type local:TestResult}">
+									<DataTemplate DataType="{x:Type contracts:TestResult}">
 										<StackPanel>
 											<StackPanel.Triggers>
 												<EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">
@@ -105,9 +115,9 @@
 													</BeginStoryboard>
 												</EventTrigger>
 											</StackPanel.Triggers>
-											<CheckBox x:Name="TheCheckBox" Content="{Binding Name}" Style="{StaticResource CustomCheckBoxStyle}"/>
+											<CheckBox x:Name="TheCheckBox" Content="{Binding Converter={converters:TestResult2StringConverter}}" Style="{StaticResource CustomCheckBoxStyle}"/>
 											<StackPanel x:Name="TheStackPanel" Height="0">
-												<TextBox x:Name="TheTextBox" Text="{Binding FailReason}" Margin="0" BorderBrush="#cccccc"/>
+												<TextBox x:Name="TheTextBox" Text="{Binding Reason}" Margin="0" BorderBrush="#cccccc" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"/>
 											</StackPanel>
 										</StackPanel>
 									</DataTemplate>

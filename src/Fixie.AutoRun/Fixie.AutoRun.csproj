@@ -63,6 +63,7 @@
     <Reference Include="System.Reactive.Windows.Threading">
       <HintPath>..\packages\Rx-XAML.2.2.2\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.0.13.0.101-ALPHA\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -88,26 +89,34 @@
     <Compile Include="AppWindow.xaml.cs">
       <DependentUpon>AppWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ChangedEventArgs.cs" />
     <Compile Include="Converters\Bool2VisibilityConverter.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\ConverterBase.cs" />
-    <Compile Include="Converters\TextWrapping2BoolConverter.cs" />
+    <Compile Include="Converters\TestResult2StringConverter.cs" />
+    <Compile Include="Converters\Bool2TextWrappingConverter.cs" />
+    <Compile Include="CreatedEventArgs.cs" />
+    <Compile Include="DeletedEventArgs.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Converters\InvertedBoolConverter.cs" />
+    <Compile Include="IFileSystemWatcher.cs" />
     <Compile Include="LaunchViewModel.cs" />
     <Compile Include="Converters\Path2FileNameConverter.cs" />
     <Compile Include="ProjectFile.cs" />
     <Compile Include="ProjectFileParser.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="RenamedEventArgs.cs" />
     <Compile Include="ShowLaunchEvent.cs" />
+    <Compile Include="SolutionChangedEventArgs.cs" />
     <Compile Include="SolutionFile.cs" />
     <Compile Include="SolutionFileParser.cs" />
     <Compile Include="Solution.cs" />
     <Compile Include="StartEvent.cs" />
     <Compile Include="ExecuteViewModel.cs" />
-    <Compile Include="TestResult.cs" />
     <Compile Include="TestRunner.cs" />
     <Page Include="AppWindow.xaml">
       <SubType>Designer</SubType>
@@ -148,10 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Observable.cs" />
-    <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -176,6 +181,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\fixie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fixie.AutoRun.FixieRunner\Fixie.AutoRun.FixieRunner.csproj">
+      <Project>{9ff868e0-27a8-4aa9-aa7c-b1882450161a}</Project>
+      <Name>Fixie.AutoRun.FixieRunner</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

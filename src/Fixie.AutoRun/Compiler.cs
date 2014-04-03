@@ -8,7 +8,7 @@ namespace Fixie.AutoRun
    public static class Compiler
    {
       private const string MsBuildPath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe";
-      private const string MsBuildArgs = " /p:Configuration=Debug /p:Platform=\"Any CPU\" /v:minimal /nologo /t:rebuild /tv:4.0";
+      private const string MsBuildArgs = " /p:Configuration=Debug /p:Platform=\"Any CPU\" /v:minimal /nologo /t:rebuild /tv:4.0 /m /nr:false";
 
       public static async Task<bool> Execute(string solutionPath, Action<string> callback, CancellationToken token)
       {
