@@ -74,11 +74,11 @@
     <Compile Include="Converters\Path2FileNameConverterTests.cs" />
     <Compile Include="CustomConvention.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="ProjectFileParserTests.cs" />
+    <Compile Include="VisualStudio\ProjectFileParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolutionFileParserTests.cs" />
-    <Compile Include="SolutionTests.cs" />
-    <Compile Include="TestDataGenerator.cs" />
+    <Compile Include="VisualStudio\SolutionFileParserTests.cs" />
+    <Compile Include="VisualStudio\SolutionTests.cs" />
+    <Compile Include="VisualStudio\TestDataGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

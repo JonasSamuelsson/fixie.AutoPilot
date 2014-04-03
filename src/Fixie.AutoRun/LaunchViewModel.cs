@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Fixie.AutoRun.Events;
+using Fixie.AutoRun.Infrastructure;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

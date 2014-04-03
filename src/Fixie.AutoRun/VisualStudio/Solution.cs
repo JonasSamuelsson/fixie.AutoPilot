@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Fixie.AutoRun.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using RenamedEventArgs = Fixie.AutoRun.FileSystem.RenamedEventArgs;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.VisualStudio
 {
    public class Solution : IDisposable
    {

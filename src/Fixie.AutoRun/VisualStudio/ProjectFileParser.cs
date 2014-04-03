@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.VisualStudio
 {
    public static class ProjectFileParser
    {

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.VisualStudio
 {
    public static class SolutionFileParser
    {

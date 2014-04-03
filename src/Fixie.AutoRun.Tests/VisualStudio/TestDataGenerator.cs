@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Fixie.AutoRun.Tests
+namespace Fixie.AutoRun.Tests.VisualStudio
 {
    public class TestDataGenerator
    {
@@ -69,7 +69,7 @@ namespace Fixie.AutoRun.Tests
             .ToString();
       }
 
-	   private static string GetFooProject()
+      private static string GetFooProject()
       {
          return new XElement("Project",
                              new XElement("ItemGroup",
@@ -81,7 +81,7 @@ namespace Fixie.AutoRun.Tests
             .ToString();
       }
 
-	   private static string GetFooTestProject()
+      private static string GetFooTestProject()
       {
          return new XElement("Project",
                              new XElement("ItemGroup",
@@ -99,7 +99,7 @@ namespace Fixie.AutoRun.Tests
             .ToString();
       }
 
-	   private static string GetFoobarProject()
+      private static string GetFoobarProject()
       {
          return new XElement("Project",
                              new XElement("ItemGroup",

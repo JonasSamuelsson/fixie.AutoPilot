@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Workers
 {
    public static class Compiler
    {

@@ -8,7 +8,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Workers
 {
    internal static class TestRunner
    {

@@ -1,13 +1,14 @@
+using Fixie.AutoRun.Events;
+using Fixie.AutoRun.FixieRunner.Contracts;
+using Fixie.AutoRun.Infrastructure;
+using Fixie.AutoRun.VisualStudio;
+using Fixie.AutoRun.Workers;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Fixie.AutoRun.FixieRunner.Contracts;
 
 namespace Fixie.AutoRun
 {
@@ -38,6 +39,12 @@ namespace Fixie.AutoRun
          PauseCommand = new RelayCommand(() => IsEnabled.Value = false);
          PlayCommand = new RelayCommand(() => IsEnabled.Value = true);
          StopCommand = new RelayCommand(() => _cancellationTokenSource.Cancel());
+         ShowSettingsCommand = new RelayCommand(ShowSettings);
+      }
+
+      private void ShowSettings()
+      {
+         _eventBus.Publish(new ShowFlyoutEvent());
       }
 
       public Observable<string> Path { get; private set; }
@@ -53,6 +60,7 @@ namespace Fixie.AutoRun
       public ICommand PauseCommand { get; private set; }
       public ICommand PlayCommand { get; private set; }
       public ICommand StopCommand { get; private set; }
+      public ICommand ShowSettingsCommand { get; private set; }
 
       public void Run(string solutionPath)
       {

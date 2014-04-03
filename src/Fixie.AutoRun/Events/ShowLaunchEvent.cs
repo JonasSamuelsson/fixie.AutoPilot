@@ -1,4 +1,4 @@
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Events
 {
    internal class ShowLaunchEvent { }
 }

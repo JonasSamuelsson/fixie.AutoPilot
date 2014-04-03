@@ -1,8 +1,10 @@
-﻿using Microsoft.Reactive.Testing;
+﻿using Fixie.AutoRun.FileSystem;
+using Fixie.AutoRun.VisualStudio;
+using Microsoft.Reactive.Testing;
 using Shouldly;
 using System;
 
-namespace Fixie.AutoRun.Tests
+namespace Fixie.AutoRun.Tests.VisualStudio
 {
    public class SolutionTests
    {

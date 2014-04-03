@@ -24,7 +24,7 @@ namespace Fixie.AutoRun
          ShutdownMode = ShutdownMode.OnLastWindowClose;
          var window = new AppWindow();
          window.Show();
-         ((AppViewModel)window.DataContext).Run();
+         ((AppWindowViewModel)window.DataContext).Run();
       }
 
       private void AssertAppDataDirectory()

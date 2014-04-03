@@ -38,7 +38,8 @@
 								        Style="{DynamicResource MetroCircleButtonStyle}" />
 							</Viewbox>
 							<Viewbox>
-								<Button Content="{StaticResource appbar_settings}" Style="{DynamicResource MetroCircleButtonStyle}" />
+								<Button Content="{StaticResource appbar_settings}" Command="{Binding ShowSettingsCommand}"
+										  Style="{DynamicResource MetroCircleButtonStyle}" />
 							</Viewbox>
 						</StackPanel>
 						<Viewbox>

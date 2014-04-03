@@ -1,6 +1,7 @@
-﻿using Shouldly;
+﻿using Fixie.AutoRun.VisualStudio;
+using Shouldly;
 
-namespace Fixie.AutoRun.Tests
+namespace Fixie.AutoRun.Tests.VisualStudio
 {
    public class SolutionFileParserTests
    {

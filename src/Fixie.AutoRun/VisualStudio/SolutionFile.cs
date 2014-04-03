@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.VisualStudio
 {
    public class SolutionFile
    {
