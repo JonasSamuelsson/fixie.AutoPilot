@@ -1,5 +1,6 @@
 ﻿using Fixie.AutoRun.FixieRunner.Contracts;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,11 +13,19 @@ namespace Fixie.AutoRun.Workers
 {
    internal static class TestRunner
    {
-      public static async Task Execute(string solutionPath, Action<TestResult> callback, CancellationToken token)
+      public class Params
+      {
+         public string SolutionPath { get; set; }
+         public IReadOnlyCollection<string> TestAssemblyPaths { get; set; }
+         public Action<TestResult> Callback { get; set; }
+         public CancellationToken Token { get; set; }
+      }
+
+      public static async Task Execute(Params @params)
       {
          const string uri = "net.pipe://localhost/fixie.autorun";
          var address = Guid.NewGuid().ToString();
-         var service = new Service(callback);
+         var service = new Service(@params.Callback);
          var serviceHost = new ServiceHost(service, new Uri(uri));
          serviceHost.AddServiceEndpoint(typeof(IService), new NetNamedPipeBinding(), address);
          serviceHost.Open();
@@ -24,10 +33,10 @@ namespace Fixie.AutoRun.Workers
          var executingAssemblyPath = Assembly.GetExecutingAssembly().Location;
          var directory = Path.GetDirectoryName(executingAssemblyPath);
          var fixieRunnerPath = typeof(IService).Assembly.Location;
-         var args = GetPaths(solutionPath).Append("--uri")
-                                          .Append(string.Format("{0}/{1}", uri, address))
-                                          .ToArray();
-
+         var args = @params.TestAssemblyPaths
+                           .Append("--uri")
+                           .Append(string.Format("{0}/{1}", uri, address))
+                           .ToArray();
 
          var process = Process.Start(new ProcessStartInfo(fixieRunnerPath)
                                           {
@@ -40,26 +49,14 @@ namespace Fixie.AutoRun.Workers
 
          while (!process.HasExited)
          {
-            if (token.IsCancellationRequested)
+            if (@params.Token.IsCancellationRequested)
             {
                process.Kill();
                return;
             }
 
-            await Task.Delay(50, token);
+            await Task.Delay(50, @params.Token);
          }
-      }
-
-      private static string[] GetPaths(string solution)
-      {
-         var dir = Path.GetDirectoryName(solution);
-         var separators = new[] { " = ", ", " };
-         return File.ReadAllLines(solution)
-             .Where(x => x.StartsWith("Project("))
-             .Select(x => x.Split(separators, StringSplitOptions.None)[1].Trim('"'))
-             .SelectMany(x => new[] { ".dll", ".exe" }.Select(y => Path.Combine(dir, x, @"bin\debug", x + y)).Where(File.Exists))
-             .Where(x => File.Exists(Path.Combine(Path.GetDirectoryName(x), "fixie.dll")))
-             .ToArray();
       }
 
       [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]

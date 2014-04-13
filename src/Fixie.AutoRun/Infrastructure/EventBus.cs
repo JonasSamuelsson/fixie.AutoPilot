@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fixie.AutoRun
+namespace Fixie.AutoRun.Infrastructure
 {
     public class EventBus
     {

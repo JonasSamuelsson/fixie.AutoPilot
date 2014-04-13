@@ -1,6 +1,6 @@
 ﻿namespace Fixie.AutoRun.Events
 {
-   public class ShowFlyoutEvent
+   internal class SettingsDiscardedEvent
    {
    }
 }

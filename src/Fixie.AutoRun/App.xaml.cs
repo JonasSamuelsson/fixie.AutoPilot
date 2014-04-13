@@ -22,9 +22,7 @@ namespace Fixie.AutoRun
          AssertAppDataDirectory();
 
          ShutdownMode = ShutdownMode.OnLastWindowClose;
-         var window = new AppWindow();
-         window.Show();
-         ((AppWindowViewModel)window.DataContext).Run();
+         new AppWindow().Show();
       }
 
       private void AssertAppDataDirectory()

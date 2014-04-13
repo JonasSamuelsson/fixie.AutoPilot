@@ -8,21 +8,26 @@
 							EnableDWMDropShadow="True" SaveWindowPosition="True"
 							BorderBrush="LightGray" BorderThickness="1" NonActiveBorderBrush="LightGray"
 							ShowWindowCommandsOnTop="True"
-							x:Name="TheWindow">
+							x:Name="TheWindow" Loaded="AppWindow_OnLoaded">
 
 	<Window.DataContext>
 		<local:AppWindowViewModel/>
 	</Window.DataContext>
 
-
 	<mahApps:MetroWindow.Flyouts>
 		<mahApps:FlyoutsControl>
-			<mahApps:Flyout Header="Settings" Position="Right" Width="300" Theme="Accent" IsOpen="{Binding ShowFlyout.Value}"
+			<mahApps:Flyout Header="Settings" Position="Right" Width="300" Theme="Accent" IsModal="True"
+								 IsOpen="{Binding SettingsViewModel.Visible.Value}"
 								 MaxWidth="{Binding ElementName=TheWindow, Path=ActualWidth, Converter={converters:RelativeDoubleConverter -100}}">
-				<Label Content="foobar"/>
+				<mahApps:Flyout.HeaderTemplate>
+					<DataTemplate>
+						<TextBlock Margin="17,25,0,5" FontSize="24" Text="{Binding}"/>
+					</DataTemplate>
+				</mahApps:Flyout.HeaderTemplate>
+				<ContentPresenter Content="{Binding SettingsViewModel}"/>
 			</mahApps:Flyout>
 		</mahApps:FlyoutsControl>
 	</mahApps:MetroWindow.Flyouts>
 
-	<ContentPresenter Content="{Binding MainViewModel.Value}"/>
+	<ContentPresenter Content="{Binding ContentViewModel.Value}"/>
 </mahApps:MetroWindow>

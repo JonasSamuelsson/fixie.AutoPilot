@@ -89,8 +89,20 @@
     <Compile Include="AppWindow.xaml.cs">
       <DependentUpon>AppWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\HasValueConverter.cs" />
+    <Compile Include="Enum2ItemsSource.cs" />
+    <Compile Include="Events\OpenNewSolutionEvent.cs" />
+    <Compile Include="Events\SettingsAcceptedEvent.cs" />
+    <Compile Include="Events\SettingsDiscardedEvent.cs" />
+    <Compile Include="Events\ShowContentEvent.cs" />
     <Compile Include="FileSystem\ChangedEventArgs.cs" />
     <Compile Include="Converters\Bool2VisibilityConverter.cs" />
+    <Compile Include="IContentViewModel.cs" />
+    <Compile Include="SettingsViewModel.cs" />
+    <Compile Include="SolutionSettings.cs" />
+    <Compile Include="VisualStudio\IProject.cs" />
+    <Compile Include="VisualStudio\ISolution.cs" />
+    <Compile Include="VisualStudio\MsBuildVerbosity.cs" />
     <Compile Include="Workers\Compiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\ConverterBase.cs" />
@@ -99,8 +111,8 @@
     <Compile Include="Converters\Bool2TextWrappingConverter.cs" />
     <Compile Include="FileSystem\CreatedEventArgs.cs" />
     <Compile Include="FileSystem\DeletedEventArgs.cs" />
-    <Compile Include="EventBus.cs" />
-    <Compile Include="Events\ShowFlyoutEvent.cs" />
+    <Compile Include="Infrastructure\EventBus.cs" />
+    <Compile Include="Events\ShowSettingsEvent.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Converters\InvertedBoolConverter.cs" />
     <Compile Include="FileSystem\IFileSystemWatcher.cs" />
@@ -117,7 +129,7 @@
     <Compile Include="VisualStudio\SolutionFile.cs" />
     <Compile Include="VisualStudio\SolutionFileParser.cs" />
     <Compile Include="VisualStudio\Solution.cs" />
-    <Compile Include="Events\StartEvent.cs" />
+    <Compile Include="Events\OpenSolutionEvent.cs" />
     <Compile Include="ExecuteViewModel.cs" />
     <Compile Include="Workers\TestRunner.cs" />
     <Page Include="AppWindow.xaml">
@@ -132,6 +144,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Resources\Styles\ComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\Styles\Checkbox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -145,6 +161,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Styles\Label.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Templates\SettingsDataTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

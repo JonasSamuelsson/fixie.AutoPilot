@@ -1,52 +1,42 @@
-﻿using Fixie.AutoRun.Events;
+﻿using System;
+using System.Linq;
+using Fixie.AutoRun.Events;
 using Fixie.AutoRun.Infrastructure;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace Fixie.AutoRun
 {
-   class LaunchViewModel
+   class LaunchViewModel : IContentViewModel
    {
-      private readonly EventBus _bus;
+      private readonly EventBus _eventBus;
 
-      public LaunchViewModel(EventBus bus)
+      public LaunchViewModel(EventBus eventBus)
       {
-         _bus = bus;
+         _eventBus = eventBus;
+
          Path = new Observable<string>();
-         Paths = new ObservableCollection<string>();
+         History = new ObservableCollection<SolutionSettings.HistoryItem>();
          BrowseCommand = new RelayCommand(Browse);
-         ExecuteNewCommand = new RelayCommand(ExecuteNew, CanExecuteNew);
-         ExecuteExistingCommand = new RelayCommand<string>(ExecuteExisting);
+         CreateSolutionCommand = new RelayCommand(CreateSolution, CanCreateSolution);
+         ConfigureExistingCommand = new RelayCommand<SolutionSettings.HistoryItem>(ConfigureExisting);
+         ExecuteExistingCommand = new RelayCommand<SolutionSettings.HistoryItem>(RunExisting);
       }
 
       public Observable<string> Path { get; private set; }
-      public ObservableCollection<string> Paths { get; private set; }
+      public ObservableCollection<SolutionSettings.HistoryItem> History { get; private set; }
       public ICommand BrowseCommand { get; private set; }
-      public ICommand ExecuteNewCommand { get; private set; }
+      public ICommand CreateSolutionCommand { get; private set; }
+      public ICommand ConfigureExistingCommand { get; private set; }
       public ICommand ExecuteExistingCommand { get; private set; }
 
       public void Run()
       {
-         LoadHistory().Each(x => Paths.Add(x));
-      }
-
-      private static IEnumerable<string> LoadHistory()
-      {
-         var path = GetHistoryPath();
-         return File.Exists(path)
-                   ? JsonConvert.DeserializeObject<string[]>(File.ReadAllText(path))
-                   : new string[] { };
-      }
-
-      private static string GetHistoryPath()
-      {
-         return System.IO.Path.Combine(Constants.AppDataDirectory, "history.json");
+         _eventBus.Subscribe<ShowLaunchEvent>(_ => _eventBus.Publish(new ShowContentEvent { ViewModel = this }));
+         SolutionSettings.Load().Each(x => History.Add(x));
+         _eventBus.Publish(new ShowContentEvent { ViewModel = this });
       }
 
       private void Browse()
@@ -55,37 +45,54 @@ namespace Fixie.AutoRun
                       {
                          CheckFileExists = true,
                          FileName = Path,
+                         // ReSharper disable once LocalizableElement
                          Filter = "Visual Studio solution|*.sln"
                       };
          if (dialog.ShowDialog() != DialogResult.OK) return;
          Path.Value = dialog.FileName;
       }
 
-      private void ExecuteNew()
+      private void CreateSolution()
       {
-         var solutionPath = Path.Value;
-
-         LoadHistory().Append(solutionPath)
-                      .OrderBy(x => x)
-                      .Distinct(StringComparer.CurrentCultureIgnoreCase)
-                      .Do(SaveHistory);
-
-         _bus.Publish(new StartEvent(solutionPath));
+         var item = History.FirstOrDefault(x => x.Path.Equals(Path, StringComparison.CurrentCultureIgnoreCase));
+         if (item == null)
+         {
+            _eventBus.Publish(new OpenNewSolutionEvent
+                              {
+                                 Path = Path.Value
+                              });
+         }
+         else
+         {
+            _eventBus.Publish(new OpenSolutionEvent
+                              {
+                                 Id = item.Id,
+                                 ShowSettings = false
+                              });
+         }
       }
 
-      private static void SaveHistory(IEnumerable<string> history)
-      {
-         File.WriteAllText(GetHistoryPath(), JsonConvert.SerializeObject(history));
-      }
-
-      private bool CanExecuteNew()
+      private bool CanCreateSolution()
       {
          return File.Exists(Path);
       }
 
-      private void ExecuteExisting(string solutionPath)
+      private void ConfigureExisting(SolutionSettings.HistoryItem item)
       {
-         _bus.Publish(new StartEvent(solutionPath));
+         _eventBus.Publish(new OpenSolutionEvent
+                      {
+                         Id = item.Id,
+                         ShowSettings = true
+                      });
+      }
+
+      private void RunExisting(SolutionSettings.HistoryItem item)
+      {
+         _eventBus.Publish(new OpenSolutionEvent
+                      {
+                         Id = item.Id,
+                         ShowSettings = false
+                      });
       }
    }
 }

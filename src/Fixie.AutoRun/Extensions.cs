@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
+using Fixie.AutoRun.VisualStudio;
 
 namespace Fixie.AutoRun
 {
@@ -39,6 +43,23 @@ namespace Fixie.AutoRun
       public static TimeSpan Seconds(this int seconds)
       {
          return TimeSpan.FromSeconds(seconds);
+      }
+
+      public static bool IsLocalName(this XAttribute xAttribute, string localName)
+      {
+         return xAttribute.Name.LocalName == localName;
+      }
+
+      public static bool IsLocalName(this XElement xElement, string localName)
+      {
+         return xElement.Name.LocalName == localName;
+      }
+
+      public static bool IsTestProject(this IProject project)
+      {
+         var filename = Path.GetFileNameWithoutExtension(project.Path);
+         var patterns = new[] {"Test", "Tests"};
+         return patterns.Any(x => filename.EndsWith(x));
       }
    }
 }

@@ -18,6 +18,9 @@ namespace Fixie.AutoRun.FixieRunner.Contracts
 		public string Class { get; set; }
 
 		[DataMember]
+		public string Method { get; set; }
+
+		[DataMember]
 		public string Test { get; set; }
 
 		[DataMember]

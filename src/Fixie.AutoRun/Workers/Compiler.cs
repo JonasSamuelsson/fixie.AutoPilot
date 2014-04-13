@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fixie.AutoRun.VisualStudio;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,31 +9,48 @@ namespace Fixie.AutoRun.Workers
    public static class Compiler
    {
       private const string MsBuildPath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe";
-      private const string MsBuildArgs = " /p:Configuration=Debug /p:Platform=\"Any CPU\" /v:minimal /nologo /t:rebuild /tv:4.0 /m /nr:false";
+      private const string MsBuildArgs = "/p:Configuration=\"{0}\" /p:Platform=\"{1}\" /v:{2} /nologo /t:rebuild /tv:4.0 /m /nr:false";
 
-      public static async Task<bool> Execute(string solutionPath, Action<string> callback, CancellationToken token)
+      public static async Task<bool> Execute(Params @params)
       {
-         callback(string.Format("------ Compiling {0} ------{1}", System.IO.Path.GetFileName(solutionPath), Environment.NewLine));
+         var arguments = string.Join(" ",
+                                     string.Format("\"{0}\"", @params.SolutionPath),
+                                     @params.Args,
+                                     string.Format(MsBuildArgs,
+                                                   @params.Configuration,
+                                                   @params.Platform,
+                                                   @params.Verbosity));
          var process = Process.Start(new ProcessStartInfo(MsBuildPath)
                                             {
-                                               Arguments = solutionPath + MsBuildArgs,
+                                               Arguments = arguments,
                                                CreateNoWindow = true,
                                                RedirectStandardOutput = true,
                                                UseShellExecute = false
                                             });
          while (!process.HasExited)
          {
-            if (token.IsCancellationRequested)
+            if (@params.CancellationToken.IsCancellationRequested)
             {
                process.Kill();
                return false;
             }
 
-            await Task.Delay(50, token);
+            await Task.Delay(50, @params.CancellationToken);
          }
 
-         callback(process.StandardOutput.ReadToEnd() + Environment.NewLine);
+         @params.Callback(process.StandardOutput.ReadToEnd() + Environment.NewLine);
          return process.ExitCode == 0;
+      }
+
+      public class Params
+      {
+         public string Args { get; set; }
+         public string Configuration { get; set; }
+         public string Platform { get; set; }
+         public MsBuildVerbosity Verbosity { get; set; }
+         public string SolutionPath { get; set; }
+         public Action<string> Callback { get; set; }
+         public CancellationToken CancellationToken { get; set; }
       }
    }
 }

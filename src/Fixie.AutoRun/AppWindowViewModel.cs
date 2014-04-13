@@ -1,53 +1,42 @@
-
 using Fixie.AutoRun.Events;
 using Fixie.AutoRun.Infrastructure;
+using System.Linq;
 
 namespace Fixie.AutoRun
 {
    public class AppWindowViewModel
    {
-      private readonly EventBus _bus;
+      private readonly EventBus _eventBus;
+      private readonly IViewModel[] _viewModels;
 
       public AppWindowViewModel()
       {
-         _bus = new EventBus();
-         _bus.Subscribe<ShowLaunchEvent>(Handle);
-         _bus.Subscribe<StartEvent>(Handle);
-         _bus.Subscribe<ShowFlyoutEvent>(Handle);
-         MainViewModel = new Observable<object>();
-         ShowFlyout = new Observable<bool>();
+         _eventBus = new EventBus();
+         _viewModels = new IViewModel[]
+                              {
+                                 new LaunchViewModel(_eventBus),
+                                 new ExecuteViewModel(_eventBus),
+                                 new SettingsViewModel(_eventBus)
+                              };
+         ContentViewModel = new Observable<IContentViewModel>();
       }
 
-      private void Handle(ShowFlyoutEvent obj)
+      public Observable<IContentViewModel> ContentViewModel { get; private set; }
+
+      public SettingsViewModel SettingsViewModel
       {
-         ShowFlyout.Value = true;
+         get { return _viewModels.OfType<SettingsViewModel>().Single(); }
       }
-
-      private void Handle(ShowLaunchEvent @event)
-      {
-         ShowLaunch();
-      }
-
-      private void Handle(StartEvent @event)
-      {
-         var executeViewModel = new ExecuteViewModel(_bus);
-         MainViewModel.Value = executeViewModel;
-         executeViewModel.Run(@event.SolutionPath);
-      }
-
-      public Observable<object> MainViewModel { get; private set; }
-      public Observable<bool> ShowFlyout { get; private set; }
 
       public void Run()
       {
-         ShowLaunch();
+         _eventBus.Subscribe<ShowContentEvent>(ShowContent);
+         _viewModels.Each(x => x.Run());
       }
 
-      private void ShowLaunch()
+      private void ShowContent(ShowContentEvent @event)
       {
-         var launchViewModel = new LaunchViewModel(_bus);
-         MainViewModel.Value = launchViewModel;
-         launchViewModel.Run();
+         ContentViewModel.Value = @event.ViewModel;
       }
    }
 }

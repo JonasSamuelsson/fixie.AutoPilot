@@ -1,0 +1,84 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						  xmlns:local="clr-namespace:Fixie.AutoRun"
+						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters"
+						  xmlns:visualStudio="clr-namespace:Fixie.AutoRun.VisualStudio">
+	<DataTemplate DataType="{x:Type local:SettingsViewModel}">
+		<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<StackPanel Grid.IsSharedSizeScope="True" CanVerticallyScroll="True">
+				<GroupBox Header="Test projects">
+					<ItemsControl ItemsSource="{Binding Projects.Value}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<CheckBox Content="{Binding Path, Converter={converters:Path2FileNameConverter}}" IsChecked="{Binding IsTestProject}"/>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</GroupBox>
+				<GroupBox Header="MS Build">
+					<StackPanel>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Args"/>
+							<TextBox Grid.Column="1" Text="{Binding MsBuild.Value.Args}"/>
+						</Grid>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Configuration"/>
+							<ComboBox Grid.Column="1" ItemsSource="{Binding MsBuild.Value.Configurations, Mode=OneWay}" SelectedValue="{Binding MsBuild.Value.Configuration}"/>
+						</Grid>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Platform"/>
+							<ComboBox Grid.Column="1" ItemsSource="{Binding MsBuild.Value.Platforms, Mode=OneWay}" SelectedValue="{Binding MsBuild.Value.Platform}"/>
+						</Grid>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Verbosity"/>
+							<ComboBox Grid.Column="1" ItemsSource="{local:Enum2ItemsSource {x:Type visualStudio:MsBuildVerbosity}}" SelectedValue="{Binding MsBuild.Value.Verbosity}"/>
+						</Grid>
+					</StackPanel>
+				</GroupBox>
+				<GroupBox Header="fixie">
+					<StackPanel>
+						<StackPanel>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+									<ColumnDefinition/>
+								</Grid.ColumnDefinitions>
+								<Label Content="Args"/>
+								<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Fixie.Value.Args}"/>
+							</Grid>
+						</StackPanel>
+					</StackPanel>
+				</GroupBox>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<Viewbox>
+						<Button Command="{Binding AcceptCommand}"
+								  Content="{DynamicResource appbar_check}"
+								  Style="{DynamicResource MetroCircleButtonStyle}"/>
+					</Viewbox>
+					<Viewbox>
+						<Button Command="{Binding CancelCommand}"
+								  Content="{DynamicResource appbar_close}"
+								  Style="{DynamicResource MetroCircleButtonStyle}"/>
+					</Viewbox>
+				</StackPanel>
+				<Grid Margin="2"/>
+			</StackPanel>
+		</ScrollViewer>
+	</DataTemplate>
+</ResourceDictionary>

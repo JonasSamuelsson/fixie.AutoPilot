@@ -1,5 +1,6 @@
 ﻿using Fixie.AutoRun.FileSystem;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,12 +10,12 @@ using RenamedEventArgs = Fixie.AutoRun.FileSystem.RenamedEventArgs;
 
 namespace Fixie.AutoRun.VisualStudio
 {
-   public class Solution : IDisposable
+   public class Solution : ISolution
    {
       private readonly string _solutionPath;
       private readonly Func<string, string> _fileReader;
       private readonly IFileSystemWatcher _fileSystemWatcher;
-      private readonly IDictionary<string, ProjectFile> _projects;
+      private IDictionary<string, ProjectFile> _projects;
 
       private Solution(string solutionPath, Func<string, string> fileReader, IFileSystemWatcher fileSystemWatcher, IScheduler scheduler)
       {
@@ -28,6 +29,9 @@ namespace Fixie.AutoRun.VisualStudio
 
          _fileSystemWatcher.Directory = Path.GetDirectoryName(_solutionPath);
       }
+
+      public IReadOnlyCollection<string> Configurations { get; private set; }
+      public IReadOnlyCollection<string> Platforms { get; private set; }
 
       private void SetupFileSystemWatcherEvents(IScheduler scheduler)
       {
@@ -65,9 +69,11 @@ namespace Fixie.AutoRun.VisualStudio
       private void ReloadSolution()
       {
          var solutionFile = LoadSolution(_solutionPath);
-         var projectFiles = solutionFile.Projects.ToDictionary(x => x, LoadProject);
-         _projects.Clear();
-         projectFiles.Each(x => _projects.Add(x.Key, x.Value));
+
+         Configurations = solutionFile.Configurations.ToList();
+         Platforms = solutionFile.Platforms.ToList();
+
+         _projects = solutionFile.Projects.ToDictionary(x => x, LoadProject);
       }
 
       private SolutionFile LoadSolution(string path)
@@ -157,6 +163,26 @@ namespace Fixie.AutoRun.VisualStudio
          }
       }
 
+      public void Dispose()
+      {
+         _fileSystemWatcher.Dispose();
+      }
+
+      public IEnumerator<IProject> GetEnumerator()
+      {
+         return _projects.Values.GetEnumerator();
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+         return GetEnumerator();
+      }
+
+      public IProject this[string projectPath]
+      {
+         get { return _projects[projectPath]; }
+      }
+
       public event EventHandler<SolutionChangedEventArgs> Changed = delegate { };
 
       private class FileSystemWatcherWrapper : IFileSystemWatcher
@@ -192,11 +218,6 @@ namespace Fixie.AutoRun.VisualStudio
          {
             _watcher.Dispose();
          }
-      }
-
-      public void Dispose()
-      {
-         _fileSystemWatcher.Dispose();
       }
    }
 }

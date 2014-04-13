@@ -8,15 +8,18 @@
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+				<!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/blue.xaml" />-->
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/cobalt.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
 				<ResourceDictionary Source="Resources/Icons.xaml"/>
 				<ResourceDictionary Source="Resources/Styles/Checkbox.xaml" />
+				<ResourceDictionary Source="Resources/Styles/ComboBox.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Label.xaml" />
 				<ResourceDictionary Source="Resources/Styles/TextBox.xaml" />
 				<ResourceDictionary Source="Resources/Styles/Viewbox.xaml" />
 				<ResourceDictionary Source="Resources/Templates/ExecuteDataTemplate.xaml"/>
 				<ResourceDictionary Source="Resources/Templates/LaunchDataTemplate.xaml"/>
+				<ResourceDictionary Source="Resources/Templates/SettingsDataTemplate.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

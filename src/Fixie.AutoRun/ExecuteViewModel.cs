@@ -5,6 +5,7 @@ using Fixie.AutoRun.VisualStudio;
 using Fixie.AutoRun.Workers;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,16 +13,18 @@ using System.Windows.Threading;
 
 namespace Fixie.AutoRun
 {
-   internal class ExecuteViewModel
+   internal class ExecuteViewModel : IContentViewModel
    {
       private readonly Dispatcher _dispatcher;
       private readonly EventBus _eventBus;
-      private bool _hasChanges;
-      private CancellationTokenSource _cancellationTokenSource;
+      private readonly CancellationTokenSource _cancellationTokenSource;
+      private SolutionSettings _settings;
       private Solution _solution;
+      private Action<bool> _onSettingsClosed;
 
       public ExecuteViewModel(EventBus eventBus)
       {
+         _cancellationTokenSource = new CancellationTokenSource();
          _dispatcher = Dispatcher.CurrentDispatcher;
          _eventBus = eventBus;
 
@@ -29,13 +32,13 @@ namespace Fixie.AutoRun
          Output = new Observable<string>();
          IsEnabled = new Observable<bool>();
          IsExecuting = new Observable<bool>();
-         HasErrorsOrFailures = new Observable<bool>();
+         HasChanges = new Observable<bool>();
          TestResults = new ObservableCollection<TestResult>();
          PassCount = new Observable<int>();
          FailCount = new Observable<int>();
          SkipCount = new Observable<int>();
 
-         BackCommand = new RelayCommand(Back);
+         BackCommand = new RelayCommand(Exit);
          PauseCommand = new RelayCommand(() => IsEnabled.Value = false);
          PlayCommand = new RelayCommand(() => IsEnabled.Value = true);
          StopCommand = new RelayCommand(() => _cancellationTokenSource.Cancel());
@@ -44,14 +47,33 @@ namespace Fixie.AutoRun
 
       private void ShowSettings()
       {
-         _eventBus.Publish(new ShowFlyoutEvent());
+         _eventBus.Publish(new ShowSettingsEvent
+                           {
+                              Configurations = _solution.Configurations.ToList(),
+                              Platforms = _solution.Platforms.ToList(),
+                              Settings = new SolutionSettings
+                                         {
+                                            Fixie = new FixieSettings(),
+                                            MsBuild = new MsBuildSettings
+                                                      {
+                                                         Configuration = _solution.Configurations.FirstOrDefault(),
+                                                         Platform = _solution.Platforms.FirstOrDefault()
+                                                      },
+                                            Projects = _solution.Select(x => new ProjectSettings
+                                                                             {
+                                                                                IsTestProject = x.IsTestProject(),
+                                                                                Path = x.Path
+                                                                             })
+                                                                .ToList()
+                                         }
+                           });
       }
 
       public Observable<string> Path { get; private set; }
       public Observable<string> Output { get; private set; }
       public Observable<bool> IsEnabled { get; private set; }
       public Observable<bool> IsExecuting { get; private set; }
-      public Observable<bool> HasErrorsOrFailures { get; private set; }
+      public Observable<bool> HasChanges { get; private set; }
       public ObservableCollection<TestResult> TestResults { get; private set; }
       public Observable<int> PassCount { get; private set; }
       public Observable<int> FailCount { get; private set; }
@@ -62,46 +84,47 @@ namespace Fixie.AutoRun
       public ICommand StopCommand { get; private set; }
       public ICommand ShowSettingsCommand { get; private set; }
 
-      public void Run(string solutionPath)
+      private async Task CompileAndTest()
       {
-         _solution = Solution.Load(solutionPath);
-         _solution.Changed += delegate { _hasChanges = true; };
-         _hasChanges = true;
-         IsEnabled.Value = true;
-         Path.Value = solutionPath;
-         _cancellationTokenSource = new CancellationTokenSource();
-
-         Task.Factory.StartNew(async () =>
-                                    {
-                                       while (true)
-                                       {
-                                          if (_hasChanges)
-                                          {
-                                             _hasChanges = false;
-                                             IsExecuting.Value = true;
-                                             PrepareNewTestRun();
-                                             HasErrorsOrFailures.Value = false;
-                                             try
-                                             {
-                                                if (await Compiler.Execute(solutionPath, x => Output.Value += x, _cancellationTokenSource.Token))
-                                                   await TestRunner.Execute(solutionPath, HandleTestResult, _cancellationTokenSource.Token);
-                                                else
-                                                   HasErrorsOrFailures.Value = true;
-                                             }
-                                             catch (Exception exception)
-                                             {
-                                                App.Error(exception);
-                                             }
-                                             IsExecuting.Value = false;
-                                             if (_hasChanges) continue;
-                                          }
-
-                                          await Task.Delay(TimeSpan.FromSeconds(1));
-                                       }
-                                    },
-                              _cancellationTokenSource.Token,
-                              TaskCreationOptions.LongRunning,
-                              TaskScheduler.Current);
+         var cancellationTokenSource = new CancellationTokenSource();
+         HasChanges.Value = false;
+         IsExecuting.Value = true;
+         PrepareNewTestRun();
+         try
+         {
+            var configuration = _settings.MsBuild.Configuration;
+            var platform = _settings.MsBuild.Platform;
+            var compilerParams = new Compiler.Params
+                                 {
+                                    Args = _settings.MsBuild.Args,
+                                    Callback = x => Output.Value += x,
+                                    CancellationToken = cancellationTokenSource.Token,
+                                    Configuration = configuration,
+                                    Platform = platform,
+                                    SolutionPath = _settings.Path,
+                                    Verbosity = _settings.MsBuild.Verbosity
+                                 };
+            if (!await Compiler.Execute(compilerParams)) return;
+            var testRunnerParams = new TestRunner.Params
+                                   {
+                                      Callback = HandleTestResult,
+                                      SolutionPath = _settings.Path,
+                                      TestAssemblyPaths = _settings.Projects
+                                                                   .Where(x => x.IsTestProject)
+                                                                   .Select(x => _solution[x.Path].GetOutputAssemblyPath(configuration, platform))
+                                                                   .ToList(),
+                                      Token = _cancellationTokenSource.Token
+                                   };
+            await TestRunner.Execute(testRunnerParams);
+         }
+         catch (Exception exception)
+         {
+            App.Error(exception);
+         }
+         finally
+         {
+            IsExecuting.Value = false;
+         }
       }
 
       private void HandleTestResult(TestResult result)
@@ -129,11 +152,118 @@ namespace Fixie.AutoRun
                             });
       }
 
-      private void Back()
+      private void Exit()
       {
          if (_solution != null) _solution.Dispose();
-         _cancellationTokenSource.Cancel();
+         //_cancellationTokenSource.Cancel();
          _eventBus.Publish<ShowLaunchEvent>();
+      }
+
+      public void Run()
+      {
+         _eventBus.Subscribe<OpenNewSolutionEvent>(OpenNewSolution);
+         _eventBus.Subscribe<OpenSolutionEvent>(OpenSolution);
+         _eventBus.Subscribe<SettingsAcceptedEvent>(SettingsAccepted);
+         _eventBus.Subscribe<SettingsDiscardedEvent>(SettingsDiscarded);
+
+         Task.Factory.StartNew(async () =>
+                                     {
+                                        while (true)
+                                        {
+                                           if (IsEnabled && !IsExecuting && HasChanges)
+                                              await CompileAndTest();
+
+                                           await Task.Delay(100.Milliseconds());
+                                        }
+                                        // ReSharper disable once FunctionNeverReturns
+                                     },
+                               _cancellationTokenSource.Token,
+                               TaskCreationOptions.LongRunning,
+                               TaskScheduler.Current);
+      }
+
+      private void SettingsAccepted(SettingsAcceptedEvent @event)
+      {
+         SettingsClosed(true);
+      }
+
+      private void SettingsDiscarded(SettingsDiscardedEvent @event)
+      {
+         SettingsClosed(false);
+      }
+
+      private void SettingsClosed(bool settingsAccepted)
+      {
+         if (_onSettingsClosed == null) return;
+         _onSettingsClosed(settingsAccepted);
+         _onSettingsClosed = null;
+      }
+
+      private void OpenSolution(OpenSolutionEvent @event)
+      {
+         _eventBus.Publish(new ShowContentEvent { ViewModel = this });
+         _settings = SolutionSettings.Load(@event.Id);
+         _solution = Solution.Load(_settings.Path);
+         // TODO handle projects added/removed
+         _solution.Changed += delegate { HasChanges.Value = true; };
+
+         _onSettingsClosed = settingsAccepted =>
+                             {
+                                if (!settingsAccepted) return;
+                                HasChanges.Value = true;
+                                IsEnabled.Value = true;
+                             };
+
+         if (@event.ShowSettings)
+         {
+            ShowSettings();
+         }
+         else
+         {
+            HasChanges.Value = true;
+            IsEnabled.Value = true;
+         }
+      }
+
+      private void OpenNewSolution(OpenNewSolutionEvent @event)
+      {
+         _eventBus.Publish(new ShowContentEvent { ViewModel = this });
+         _solution = Solution.Load(@event.Path);
+         _settings = new SolutionSettings
+                     {
+                        MsBuild =
+                        {
+                           Configuration = _solution.Configurations.First(),
+                           Platform = _solution.Platforms.First()
+                        },
+                        Path = @event.Path,
+                        Projects = _solution.Select(x => new ProjectSettings
+                                                         {
+                                                            IsTestProject = x.IsTestProject(),
+                                                            Path = x.Path
+                                                         })
+                                            .ToList()
+                     };
+         _solution.Changed += delegate { HasChanges.Value = true; };
+         _onSettingsClosed = settingsAccepted =>
+                             {
+                                if (settingsAccepted)
+                                {
+                                   IsEnabled.Value = true;
+                                   HasChanges.Value = true;
+                                }
+                                else
+                                {
+                                   Exit();
+                                }
+                             };
+
+         _eventBus.Publish(new ShowSettingsEvent
+                           {
+                              Configurations = _solution.Configurations,
+                              Platforms = _solution.Platforms,
+                              Settings = _settings
+                           });
       }
    }
 }

@@ -1,4 +1,5 @@
-﻿using Fixie.AutoRun.FileSystem;
+﻿using System.Linq;
+using Fixie.AutoRun.FileSystem;
 using Fixie.AutoRun.VisualStudio;
 using Microsoft.Reactive.Testing;
 using Shouldly;
@@ -8,6 +9,23 @@ namespace Fixie.AutoRun.Tests.VisualStudio
 {
    public class SolutionTests
    {
+      public void ShouldContainConfigurationsFromSolutionFile()
+      {
+	      var solution = Solution.Load(TestDataGenerator.SolutionPath, TestDataGenerator.Get, new FileSystem(), new TestScheduler());
+
+         solution.Configurations.Count.ShouldBe(2);
+         solution.Configurations.ElementAt(0).ShouldBe("Debug");
+         solution.Configurations.ElementAt(1).ShouldBe("Release");
+      }
+
+      public void ShouldContainPlatormsFromSolutionFile()
+      {
+         var solution = Solution.Load(TestDataGenerator.SolutionPath, TestDataGenerator.Get, new FileSystem(), new TestScheduler());
+
+         solution.Platforms.Count.ShouldBe(1);
+         solution.Platforms.ElementAt(0).ShouldBe("Any CPU");
+      }
+
       public void ContentFileChangedShouldTriggerEvent()
       {
          var fileSystem = new FileSystem();
@@ -175,6 +193,16 @@ namespace Fixie.AutoRun.Tests.VisualStudio
 
          solutionChangedEventArgs.ChangedProjects.Count.ShouldBe(1);
          solutionChangedEventArgs.ChangedProjects.ShouldContain(TestDataGenerator.FooTestsProjectPath);
+      }
+
+      public void ShouldBeAbleToEnumerateProjects()
+      {
+         var solution = Solution.Load(TestDataGenerator.SolutionPath, TestDataGenerator.Get, new FileSystem(), new TestScheduler());
+         var projects = solution.ToList();
+         projects.Count.ShouldBe(3);
+         projects.ElementAt(0).Path.ShouldBe(TestDataGenerator.FooProjectPath);
+         projects.ElementAt(1).Path.ShouldBe(TestDataGenerator.FooTestsProjectPath);
+         projects.ElementAt(2).Path.ShouldBe(TestDataGenerator.FoobarProjectPath);
       }
 
       public class FileSystem : IFileSystemWatcher
