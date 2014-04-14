@@ -107,6 +107,7 @@ namespace Fixie.AutoRun
             if (!await Compiler.Execute(compilerParams)) return;
             var testRunnerParams = new TestRunner.Params
                                    {
+                                      Args = _settings.Fixie.Args,
                                       Callback = HandleTestResult,
                                       SolutionPath = _settings.Path,
                                       TestAssemblyPaths = _settings.Projects

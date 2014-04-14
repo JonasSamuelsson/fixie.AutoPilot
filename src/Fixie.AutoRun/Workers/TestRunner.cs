@@ -13,14 +13,6 @@ namespace Fixie.AutoRun.Workers
 {
    internal static class TestRunner
    {
-      public class Params
-      {
-         public string SolutionPath { get; set; }
-         public IReadOnlyCollection<string> TestAssemblyPaths { get; set; }
-         public Action<TestResult> Callback { get; set; }
-         public CancellationToken Token { get; set; }
-      }
-
       public static async Task Execute(Params @params)
       {
          const string uri = "net.pipe://localhost/fixie.autorun";
@@ -36,6 +28,7 @@ namespace Fixie.AutoRun.Workers
          var args = @params.TestAssemblyPaths
                            .Append("--uri")
                            .Append(string.Format("{0}/{1}", uri, address))
+                           .Append(@params.Args)
                            .ToArray();
 
          var process = Process.Start(new ProcessStartInfo(fixieRunnerPath)
@@ -57,6 +50,15 @@ namespace Fixie.AutoRun.Workers
 
             await Task.Delay(50, @params.Token);
          }
+      }
+
+      public class Params
+      {
+         public string Args { get; set; }
+         public string SolutionPath { get; set; }
+         public IReadOnlyCollection<string> TestAssemblyPaths { get; set; }
+         public Action<TestResult> Callback { get; set; }
+         public CancellationToken Token { get; set; }
       }
 
       [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
