@@ -67,21 +67,7 @@ namespace Fixie.AutoRun
                            {
                               Configurations = _solution.Configurations.ToList(),
                               Platforms = _solution.Platforms.ToList(),
-                              Settings = new SolutionSettings
-                                         {
-                                            Fixie = new FixieSettings(),
-                                            MsBuild = new MsBuildSettings
-                                                      {
-                                                         Configuration = _solution.Configurations.FirstOrDefault(),
-                                                         Platform = _solution.Platforms.FirstOrDefault()
-                                                      },
-                                            Projects = _solution.Select(x => new ProjectSettings
-                                                                             {
-                                                                                IsTestProject = x.IsTestProject(),
-                                                                                Path = x.Path
-                                                                             })
-                                                                .ToList()
-                                         }
+                              Settings = _settings
                            });
       }
 
