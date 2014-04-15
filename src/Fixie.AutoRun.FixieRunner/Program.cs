@@ -13,8 +13,8 @@ namespace Fixie.AutoRun.FixieRunner
             var assemblyFullPath = Path.GetFullPath(assemblyPath);
             using (var executionEnvironment = new ExecutionEnvironment(assemblyPath, applicationBaseDirectory))
             {
-               var testRunner = executionEnvironment.Create<TestRunner>();
-               testRunner.Execute(assemblyFullPath, args);
+               var consoleRunner = executionEnvironment.Create<ConsoleRunner>();
+               consoleRunner.RunAssembly(assemblyFullPath, args);
             }
          }
       }
