@@ -193,6 +193,7 @@ namespace Fixie.AutoRun
       {
          _eventBus.Publish(new ShowContentEvent { ViewModel = this });
          _settings = SolutionSettings.Load(@event.Id);
+         Path.Value = _settings.Path;
          _solution = Solution.Load(_settings.Path);
          // TODO handle projects added/removed
          _solution.Changed += delegate { HasChanges.Value = true; };
@@ -217,6 +218,7 @@ namespace Fixie.AutoRun
 
       private void OpenNewSolution(OpenNewSolutionEvent @event)
       {
+         Path.Value = @event.Path;
          _eventBus.Publish(new ShowContentEvent { ViewModel = this });
          _solution = Solution.Load(@event.Path);
          _settings = new SolutionSettings
