@@ -98,6 +98,7 @@
     <Compile Include="FileSystem\ChangedEventArgs.cs" />
     <Compile Include="Converters\Bool2VisibilityConverter.cs" />
     <Compile Include="IContentViewModel.cs" />
+    <Compile Include="OutputTextBox.cs" />
     <Compile Include="SettingsViewModel.cs" />
     <Compile Include="SolutionSettings.cs" />
     <Compile Include="VisualStudio\IProject.cs" />

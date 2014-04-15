@@ -20,13 +20,19 @@ namespace Fixie.AutoRun.Workers
                                                    @params.Configuration,
                                                    @params.Platform,
                                                    @params.Verbosity));
-         var process = Process.Start(new ProcessStartInfo(MsBuildPath)
-                                            {
-                                               Arguments = arguments,
-                                               CreateNoWindow = true,
-                                               RedirectStandardOutput = true,
-                                               UseShellExecute = false
-                                            });
+         var process = new Process
+                       {
+                          StartInfo = new ProcessStartInfo(MsBuildPath)
+                                      {
+                                         Arguments = arguments,
+                                         CreateNoWindow = true,
+                                         RedirectStandardOutput = true,
+                                         UseShellExecute = false
+                                      }
+                       };
+         process.OutputDataReceived += (sender, args) => @params.Callback(args.Data);
+         process.Start();
+         process.BeginOutputReadLine();
          while (!process.HasExited)
          {
             if (@params.CancellationToken.IsCancellationRequested)
@@ -38,7 +44,6 @@ namespace Fixie.AutoRun.Workers
             await Task.Delay(50, @params.CancellationToken);
          }
 
-         @params.Callback(process.StandardOutput.ReadToEnd() + Environment.NewLine);
          return process.ExitCode == 0;
       }
 

@@ -29,7 +29,6 @@ namespace Fixie.AutoRun
          _eventBus = eventBus;
 
          Path = new Observable<string>();
-         Output = new Observable<string>();
          IsEnabled = new Observable<bool>();
          IsExecuting = new Observable<bool>();
          HasChanges = new Observable<bool>();
@@ -38,12 +37,29 @@ namespace Fixie.AutoRun
          FailCount = new Observable<int>();
          SkipCount = new Observable<int>();
 
+         MsBuild = new MsBuildViewModel();
+
          BackCommand = new RelayCommand(Exit);
          PauseCommand = new RelayCommand(() => IsEnabled.Value = false);
          PlayCommand = new RelayCommand(() => IsEnabled.Value = true);
          StopCommand = new RelayCommand(() => _cancellationTokenSource.Cancel());
          ShowSettingsCommand = new RelayCommand(ShowSettings);
       }
+
+      public Observable<string> Path { get; private set; }
+      public Observable<bool> IsEnabled { get; private set; }
+      public Observable<bool> IsExecuting { get; private set; }
+      public Observable<bool> HasChanges { get; private set; }
+      public MsBuildViewModel MsBuild { get; set; }
+      public ObservableCollection<TestResult> TestResults { get; private set; }
+      public Observable<int> PassCount { get; private set; }
+      public Observable<int> FailCount { get; private set; }
+      public Observable<int> SkipCount { get; private set; }
+      public ICommand BackCommand { get; private set; }
+      public ICommand PauseCommand { get; private set; }
+      public ICommand PlayCommand { get; private set; }
+      public ICommand StopCommand { get; private set; }
+      public ICommand ShowSettingsCommand { get; private set; }
 
       private void ShowSettings()
       {
@@ -69,21 +85,6 @@ namespace Fixie.AutoRun
                            });
       }
 
-      public Observable<string> Path { get; private set; }
-      public Observable<string> Output { get; private set; }
-      public Observable<bool> IsEnabled { get; private set; }
-      public Observable<bool> IsExecuting { get; private set; }
-      public Observable<bool> HasChanges { get; private set; }
-      public ObservableCollection<TestResult> TestResults { get; private set; }
-      public Observable<int> PassCount { get; private set; }
-      public Observable<int> FailCount { get; private set; }
-      public Observable<int> SkipCount { get; private set; }
-      public ICommand BackCommand { get; private set; }
-      public ICommand PauseCommand { get; private set; }
-      public ICommand PlayCommand { get; private set; }
-      public ICommand StopCommand { get; private set; }
-      public ICommand ShowSettingsCommand { get; private set; }
-
       private async Task CompileAndTest()
       {
          var cancellationTokenSource = new CancellationTokenSource();
@@ -97,7 +98,7 @@ namespace Fixie.AutoRun
             var compilerParams = new Compiler.Params
                                  {
                                     Args = _settings.MsBuild.Args,
-                                    Callback = x => Output.Value += x,
+                                    Callback = x => { MsBuild.Output.Value += x + Environment.NewLine; },
                                     CancellationToken = cancellationTokenSource.Token,
                                     Configuration = configuration,
                                     Platform = platform,
@@ -105,6 +106,7 @@ namespace Fixie.AutoRun
                                     Verbosity = _settings.MsBuild.Verbosity
                                  };
             if (!await Compiler.Execute(compilerParams)) return;
+            MsBuild.Visible.Value = false;
             var testRunnerParams = new TestRunner.Params
                                    {
                                       Args = _settings.Fixie.Args,
@@ -145,7 +147,8 @@ namespace Fixie.AutoRun
       {
          _dispatcher.Invoke(() =>
                             {
-                               Output.Value = string.Empty;
+                               MsBuild.Output.Value = string.Empty;
+                               MsBuild.Visible.Value = true;
                                TestResults.Clear();
                                FailCount.Value = 0;
                                PassCount.Value = 0;
@@ -265,6 +268,17 @@ namespace Fixie.AutoRun
                               Platforms = _solution.Platforms,
                               Settings = _settings
                            });
+      }
+
+      public class MsBuildViewModel
+      {
+         public MsBuildViewModel()
+         {
+            Output = new Observable<string>();
+            Visible = new Observable<bool>();
+         }
+         public Observable<string> Output { get; private set; }
+         public Observable<bool> Visible { get; private set; }
       }
    }
 }

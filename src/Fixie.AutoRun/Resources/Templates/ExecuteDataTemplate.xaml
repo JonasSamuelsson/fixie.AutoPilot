@@ -4,12 +4,14 @@
 						  xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters"
 						  xmlns:contracts="clr-namespace:Fixie.AutoRun.FixieRunner.Contracts;assembly=Fixie.AutoRun.FixieRunner"
-						  xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls">
+						  xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+						  xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock">
 	<DataTemplate DataType="{x:Type local:ExecuteViewModel}">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 			<StackPanel Grid.Row="0" Margin="4">
 				<Grid>
@@ -51,111 +53,97 @@
 				</Grid>
 				<controls:MetroProgressBar IsIndeterminate="{Binding IsExecuting.Value}" HorizontalAlignment="Stretch"/>
 			</StackPanel>
-			<TabControl Grid.Row="1" TabStripPlacement="Bottom">
-				<TabItem Header="_Output">
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
-						<TextBox Grid.Row="0" x:Name="OutputTextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Text="{Binding Output.Value}" TextWrapping="{Binding ElementName=WrapCheckBox, Path=IsChecked, Converter={converters:Bool2TextWrappingConverter}}"/>
-						<CheckBox Grid.Row="1" x:Name="WrapCheckBox">
-							<Label Content="_Wrap"/>
-						</CheckBox>
-					</Grid>
-				</TabItem>
-				<TabItem Header="_Result">
-					<TabItem.Resources>
+			<Grid Grid.Row="1">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<StackPanel Orientation="Horizontal">
+					<Label Content="Passed: "/>
+					<Label Content="{Binding PassCount.Value}"/>
+					<Label Content="Failed: "/>
+					<Label Content="{Binding FailCount.Value}"/>
+					<Label Content="Skipped: "/>
+					<Label Content="{Binding SkipCount.Value}"/>
+				</StackPanel>
+				<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+					<ScrollViewer.Resources>
 						<CollectionViewSource x:Key="TestResultsViewSource" Source="{Binding TestResults}">
 							<CollectionViewSource.SortDescriptions>
 								<componentModel:SortDescription PropertyName="Name"/>
 							</CollectionViewSource.SortDescriptions>
-						</CollectionViewSource>
-					</TabItem.Resources>
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-						<StackPanel Orientation="Horizontal">
-							<Label Content="Passed: "/>
-							<Label Content="{Binding PassCount.Value}"/>
-							<Label Content="Failed: "/>
-							<Label Content="{Binding FailCount.Value}"/>
-							<Label Content="Skipped: "/>
-							<Label Content="{Binding SkipCount.Value}"/>
-						</StackPanel>
-						<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-							<ItemsControl ItemsSource="{Binding Source={StaticResource TestResultsViewSource}}" HorizontalContentAlignment="Stretch">
-								<ItemsControl.ItemTemplate>
-									<DataTemplate DataType="{x:Type contracts:TestResult}">
-										<StackPanel>
-											<StackPanel.Triggers>
-												<EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">
-													<BeginStoryboard>
-														<Storyboard>
-															<DoubleAnimation Storyboard.TargetName="TheStackPanel"
+						</CollectionViewSource></ScrollViewer.Resources>
+					<ItemsControl ItemsSource="{Binding Source={StaticResource TestResultsViewSource}}" HorizontalContentAlignment="Stretch">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate DataType="{x:Type contracts:TestResult}">
+								<StackPanel>
+									<StackPanel.Triggers>
+										<EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">
+											<BeginStoryboard>
+												<Storyboard>
+													<DoubleAnimation Storyboard.TargetName="TheStackPanel"
                                                                              Storyboard.TargetProperty="Height"
                                                                              To="{Binding ElementName=TheTextBox, Path=ActualHeight}"
                                                                              Duration="0:0:0.25">
-																<DoubleAnimation.EasingFunction>
-																	<ExponentialEase EasingMode="EaseOut"/>
-																</DoubleAnimation.EasingFunction>
-															</DoubleAnimation>
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-												<EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="TheCheckBox">
-													<BeginStoryboard>
-														<Storyboard>
-															<DoubleAnimation Storyboard.TargetName="TheStackPanel"
+														<DoubleAnimation.EasingFunction>
+															<ExponentialEase EasingMode="EaseOut"/>
+														</DoubleAnimation.EasingFunction>
+													</DoubleAnimation>
+												</Storyboard>
+											</BeginStoryboard>
+										</EventTrigger>
+										<EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="TheCheckBox">
+											<BeginStoryboard>
+												<Storyboard>
+													<DoubleAnimation Storyboard.TargetName="TheStackPanel"
                                                                              Storyboard.TargetProperty="Height"
                                                                              To="0"
                                                                              Duration="0:0:0.1"/>
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-											</StackPanel.Triggers>
-											<CheckBox x:Name="TheCheckBox" Content="{Binding Converter={converters:TestResult2StringConverter}}" Style="{StaticResource CustomCheckBoxStyle}">
-												<CheckBox.ToolTip>
-													<Grid>
-														<Grid.Resources>
-															<Style TargetType="{x:Type TextBlock}">
-																<Setter Property="Margin" Value="2,0"/>
-															</Style>
-														</Grid.Resources>
-														<Grid.ColumnDefinitions>
-															<ColumnDefinition/>
-															<ColumnDefinition/>
-														</Grid.ColumnDefinitions>
-														<Grid.RowDefinitions>
-															<RowDefinition/>
-															<RowDefinition/>
-															<RowDefinition/>
-															<RowDefinition/>
-														</Grid.RowDefinitions>
-														<TextBlock Grid.Column="0" Grid.Row="0" Text="Assembly:"/>
-														<TextBlock Grid.Column="0" Grid.Row="1" Text="Namespace:"/>
-														<TextBlock Grid.Column="0" Grid.Row="2" Text="Class:"/>
-														<TextBlock Grid.Column="0" Grid.Row="3" Text="Method:"/>
-														<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Assembly, Mode=OneTime}"/>
-														<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Namespace, Mode=OneTime}"/>
-														<TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Class, Mode=OneTime}"/>
-														<TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Method, Mode=OneTime}"/>
-													</Grid>
-												</CheckBox.ToolTip>
-											</CheckBox>
-											<StackPanel x:Name="TheStackPanel" Height="0">
-												<TextBox x:Name="TheTextBox" Text="{Binding Reason}" Margin="0" BorderBrush="#cccccc" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"/>
-											</StackPanel>
-										</StackPanel>
-									</DataTemplate>
-								</ItemsControl.ItemTemplate>
-							</ItemsControl>
-						</ScrollViewer>
-					</Grid>
-				</TabItem>
-			</TabControl>
+												</Storyboard>
+											</BeginStoryboard>
+										</EventTrigger>
+									</StackPanel.Triggers>
+									<CheckBox x:Name="TheCheckBox" Content="{Binding Converter={converters:TestResult2StringConverter}}" Style="{StaticResource CustomCheckBoxStyle}">
+										<CheckBox.ToolTip>
+											<Grid>
+												<Grid.Resources>
+													<Style TargetType="{x:Type TextBlock}">
+														<Setter Property="Margin" Value="2,0"/>
+													</Style>
+												</Grid.Resources>
+												<Grid.ColumnDefinitions>
+													<ColumnDefinition/>
+													<ColumnDefinition/>
+												</Grid.ColumnDefinitions>
+												<Grid.RowDefinitions>
+													<RowDefinition/>
+													<RowDefinition/>
+													<RowDefinition/>
+													<RowDefinition/>
+												</Grid.RowDefinitions>
+												<TextBlock Grid.Column="0" Grid.Row="0" Text="Assembly:"/>
+												<TextBlock Grid.Column="0" Grid.Row="1" Text="Namespace:"/>
+												<TextBlock Grid.Column="0" Grid.Row="2" Text="Class:"/>
+												<TextBlock Grid.Column="0" Grid.Row="3" Text="Method:"/>
+												<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Assembly, Mode=OneTime}"/>
+												<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Namespace, Mode=OneTime}"/>
+												<TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Class, Mode=OneTime}"/>
+												<TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Method, Mode=OneTime}"/>
+											</Grid>
+										</CheckBox.ToolTip>
+									</CheckBox>
+									<StackPanel x:Name="TheStackPanel" Height="0">
+										<TextBox x:Name="TheTextBox" Text="{Binding Reason}" Margin="0" BorderBrush="#cccccc" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"/>
+									</StackPanel>
+								</StackPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</Grid>
+			<Expander Grid.Row="2" Header="MS Build Output" IsExpanded="{Binding MsBuild.Visible.Value}">
+				<local:OutputTextBox FontFamily="Consolas" Text="{Binding MsBuild.Output.Value}" Height="200"/>
+			</Expander>
 		</Grid>
 	</DataTemplate>
 </ResourceDictionary>
