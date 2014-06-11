@@ -9,7 +9,7 @@ namespace Fixie.AutoRun.Converters
       public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
          var result = (TestResult)value;
-         return string.Join(".", result.Namespace, result.Class, result.Test);
+         return result.Test;
       }
    }
 }
