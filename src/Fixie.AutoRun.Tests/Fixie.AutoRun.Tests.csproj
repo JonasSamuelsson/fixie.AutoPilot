@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fixie, Version=0.0.1.158, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Fixie.0.0.1.158\lib\net45\Fixie.dll</HintPath>
+    <Reference Include="Fixie">
+      <HintPath>..\packages\Fixie.1.0.0.1\lib\net45\Fixie.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Reactive.Testing">
       <HintPath>..\packages\Rx-Testing.2.2.2\lib\net45\Microsoft.Reactive.Testing.dll</HintPath>

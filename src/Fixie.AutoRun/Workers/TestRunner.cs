@@ -26,8 +26,7 @@ namespace Fixie.AutoRun.Workers
          var directory = Path.GetDirectoryName(executingAssemblyPath);
          var fixieRunnerPath = typeof(IService).Assembly.Location;
          var args = @params.TestAssemblyPaths
-                           .Append("--uri")
-                           .Append(string.Format("{0}/{1}", uri, address))
+                           .Append("--uri:" + string.Format("{0}/{1}", uri, address))
                            .Append(@params.Args)
                            .ToArray();
 

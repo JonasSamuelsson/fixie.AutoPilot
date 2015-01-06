@@ -219,8 +219,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.0.0.1.158\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
-xcopy $(SolutionDir)packages\Fixie.0.0.1.158\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.1.0.0.1\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
+xcopy $(SolutionDir)packages\Fixie.1.0.0.1\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

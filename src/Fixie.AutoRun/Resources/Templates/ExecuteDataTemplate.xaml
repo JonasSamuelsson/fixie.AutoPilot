@@ -133,7 +133,7 @@
 										</CheckBox.ToolTip>
 									</CheckBox>
 									<StackPanel x:Name="TheStackPanel" Height="0">
-										<TextBox x:Name="TheTextBox" Text="{Binding Reason}" Margin="0" BorderBrush="#cccccc" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"/>
+										<TextBox x:Name="TheTextBox" Text="{Binding Reason}" Margin="0" BorderBrush="#cccccc" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" FontFamily="Consolas"/>
 									</StackPanel>
 								</StackPanel>
 							</DataTemplate>
