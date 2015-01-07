@@ -42,6 +42,10 @@
     <ApplicationIcon>Resources\fixie.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fixie, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Fixie.1.0.0.1\lib\net45\Fixie.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=0.13.0.101, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MahApps.Metro.0.13.0.101-ALPHA\lib\net45\MahApps.Metro.dll</HintPath>
@@ -66,6 +70,7 @@
     <Reference Include="System.Reactive.Windows.Threading">
       <HintPath>..\packages\Rx-XAML.2.2.2\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -135,7 +140,11 @@
     <Compile Include="VisualStudio\Solution.cs" />
     <Compile Include="Events\OpenSolutionEvent.cs" />
     <Compile Include="ExecuteViewModel.cs" />
+    <Compile Include="Workers\IService.cs" />
+    <Compile Include="Workers\FixieListener.cs" />
+    <Compile Include="Workers\TestResult.cs" />
     <Compile Include="Workers\TestRunner.cs" />
+    <Compile Include="Workers\TestStatus.cs" />
     <Page Include="AppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -209,18 +218,12 @@
     <Resource Include="Resources\fixie.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Fixie.AutoRun.FixieRunner\Fixie.AutoRun.FixieRunner.csproj">
-      <Project>{9ff868e0-27a8-4aa9-aa7c-b1882450161a}</Project>
-      <Name>Fixie.AutoRun.FixieRunner</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\fixie.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(SolutionDir)packages\Fixie.1.0.0.1\lib\net45\Fixie.Console.exe $(ProjectDir)$(OutDir) /Q /Y
-xcopy $(SolutionDir)packages\Fixie.1.0.0.1\lib\net45\Fixie.dll $(ProjectDir)$(OutDir) /Q /Y</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,4 @@
-namespace Fixie.AutoRun.FixieRunner.Contracts
+namespace Fixie.AutoRun.Workers
 {
 	public enum TestStatus
 	{

@@ -3,9 +3,9 @@
 						  xmlns:local="clr-namespace:Fixie.AutoRun"
 						  xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 						  xmlns:converters="clr-namespace:Fixie.AutoRun.Converters"
-						  xmlns:contracts="clr-namespace:Fixie.AutoRun.FixieRunner.Contracts;assembly=Fixie.AutoRun.FixieRunner"
-						  xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-						  xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock">
+                    xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+						  xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+						  xmlns:workers="clr-namespace:Fixie.AutoRun.Workers">
 	<DataTemplate DataType="{x:Type local:ExecuteViewModel}">
 		<Grid>
 			<Grid.RowDefinitions>
@@ -75,7 +75,7 @@
 						</CollectionViewSource></ScrollViewer.Resources>
 					<ItemsControl ItemsSource="{Binding Source={StaticResource TestResultsViewSource}}" HorizontalContentAlignment="Stretch">
 						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="{x:Type contracts:TestResult}">
+							<DataTemplate DataType="{x:Type workers:TestResult}">
 								<StackPanel>
 									<StackPanel.Triggers>
 										<EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="TheCheckBox">

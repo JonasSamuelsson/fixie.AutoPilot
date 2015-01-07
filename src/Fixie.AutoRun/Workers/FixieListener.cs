@@ -1,17 +1,15 @@
-using Fixie.AutoRun.FixieRunner.Contracts;
 using Fixie.Execution;
 using System;
-using System.Text;
 
-namespace Fixie.AutoRun.FixieRunner
+namespace Fixie.AutoRun.Workers
 {
    [Serializable]
-   internal class NamedPipesListener : MarshalByRefObject, Listener
+   public class FixieListener : MarshalByRefObject, Listener
    {
       private readonly IService _proxy;
       private AssemblyInfo _assembly;
 
-      public NamedPipesListener(IService proxy)
+      public FixieListener(IService proxy)
       {
          _proxy = proxy;
       }
@@ -33,12 +31,7 @@ namespace Fixie.AutoRun.FixieRunner
 
       public void CaseFailed(FailResult result)
       {
-         var reason = new StringBuilder()
-            .AppendLine(result.Exceptions.PrimaryException.Type)
-            .AppendLine(result.Exceptions.CompoundStackTrace)
-            .ToString()
-            .Trim();
-         _proxy.TestCompleted(GetTestResult(result.MethodGroup, TestStatus.Fail, reason));
+         _proxy.TestCompleted(GetTestResult(result.MethodGroup, TestStatus.Fail, result.Exceptions.CompoundStackTrace.Trim()));
       }
 
       public void AssemblyCompleted(AssemblyInfo assembly, AssemblyResult result)

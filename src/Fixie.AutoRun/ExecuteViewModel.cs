@@ -1,5 +1,4 @@
 using Fixie.AutoRun.Events;
-using Fixie.AutoRun.FixieRunner.Contracts;
 using Fixie.AutoRun.Infrastructure;
 using Fixie.AutoRun.VisualStudio;
 using Fixie.AutoRun.Workers;

@@ -1,6 +1,6 @@
 ﻿using System.ServiceModel;
 
-namespace Fixie.AutoRun.FixieRunner.Contracts
+namespace Fixie.AutoRun.Workers
 {
    [ServiceContract]
    public interface IService

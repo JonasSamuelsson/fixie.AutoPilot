@@ -1,6 +1,6 @@
-﻿using Fixie.AutoRun.FixieRunner.Contracts;
-using System;
+﻿using System;
 using System.Globalization;
+using Fixie.AutoRun.Workers;
 
 namespace Fixie.AutoRun.Converters
 {
