@@ -1,5 +1,6 @@
 using Fixie.Execution;
 using System;
+using System.Text.RegularExpressions;
 
 namespace Fixie.AutoRun.Workers
 {
@@ -31,7 +32,15 @@ namespace Fixie.AutoRun.Workers
 
       public void CaseFailed(FailResult result)
       {
-         _proxy.TestCompleted(GetTestResult(result.MethodGroup, TestStatus.Fail, result.Exceptions.CompoundStackTrace.Trim()));
+         _proxy.TestCompleted(GetTestResult(result.MethodGroup, TestStatus.Fail, FormatFailReason(result)));
+      }
+
+      private static string FormatFailReason(FailResult result)
+      {
+         var reason = result.Exceptions.CompoundStackTrace.Trim();
+         var pattern = @"^([ ]*)at ([a-z._()]+) in ([a-z.:\\_ ]+:line \d+)$";
+         var replacement = @"$1at $2" + Environment.NewLine + @"$1in $3";
+         return Regex.Replace(reason, pattern, replacement, RegexOptions.IgnoreCase | RegexOptions.Multiline);
       }
 
       public void AssemblyCompleted(AssemblyInfo assembly, AssemblyResult result)
