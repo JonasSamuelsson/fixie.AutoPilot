@@ -30,12 +30,12 @@
 						<StackPanel Orientation="Horizontal"
 						            Visibility="{Binding IsExecuting.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}">
 							<Viewbox>
-								<Button Content="{StaticResource appbar_eye_hide}" Command="{Binding PauseCommand}"
+								<Button Content="{StaticResource appbar_control_pause}" Command="{Binding PauseCommand}"
 								        Visibility="{Binding IsEnabled.Value, Converter={converters:Bool2VisibilityConverter}}"
 								        Style="{DynamicResource MetroCircleButtonStyle}" />
 							</Viewbox>
 							<Viewbox>
-								<Button Content="{StaticResource appbar_eye}" Command="{Binding PlayCommand}"
+								<Button Content="{StaticResource appbar_control_play}" Command="{Binding PlayCommand}"
 								        Visibility="{Binding IsEnabled.Value, Converter={converters:InvertedBoolConverter Converter={converters:Bool2VisibilityConverter}}}"
 								        Style="{DynamicResource MetroCircleButtonStyle}" />
 							</Viewbox>
