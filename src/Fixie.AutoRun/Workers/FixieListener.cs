@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 
 namespace Fixie.AutoRun.Workers
 {
-   [Serializable]
    public class FixieListener : MarshalByRefObject, Listener
    {
       private readonly IService _proxy;
